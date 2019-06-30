@@ -47,6 +47,7 @@ class CLiAgentRemote(CliAgent):
 def main():
    cli=CliAgentLocal("Linux")
    cli.exec_command()
+   print "yaron"
 
 
 if __name__=='__main__':
