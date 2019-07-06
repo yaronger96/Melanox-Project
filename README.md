@@ -1,4 +1,1 @@
-# hello-world
-My first GitHub repository
- 
- Prof Lee Mohse.
+This is the gitHub of our melanox project.
