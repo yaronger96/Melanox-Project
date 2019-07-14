@@ -39,72 +39,70 @@ class Monostate:
             self.downstreamComponent = None # pci component
             self.CliAgent = None
 
-    def __init__(self,dut="",serverName = "Local"):
+    def __init__(self, dut="", serverName = "Local"):
         if Monostate._inner is None:
             Monostate._inner = Monostate.inner()
-         ##   monostate._inner.dut = dut
-            self.dut = dut
-            Monostate.evalDutType()
-            Monostate.evalServerName( serverName )
-            self.dutComponent = PciComponent()
-            self.upstreamComponent = PciComponent()
-            self.downstreamComponent = PciComponent()
-            if(self.dutType == "BDF Device"):
+            ##   monostate._inner.dut = dut
+            self._inner.dut = dut
+            self.evalDutType()
+            self.evalServerName(serverName)
+            self._inner.dutComponent = PciComponent()
+            self._inner.upstreamComponent = PciComponent()
+            self._inner.downstreamComponent = PciComponent()
+            if self._inner.dutType == "BDF Device":
                 self.init_BDF_Device_input()
-            elif (self.dutType == "CRspace Device"):
+            elif self._inner.dutType == "CRspace Device":
                 self.init_CRspace_Device_input()
-            elif (self.dutType == "MTusb Device"):
+            elif self._inner.dutType == "MTusb Device":
                 self.init_MtUsb_input()
-            print("monostate done")
-
-
-
+            elif self._inner.dutType == "Unknown Device":
+                print "Unknown Device cant continue"
+                exit(1)
+            print("Monostate done")
 
     def evalDutType(self):
-        if ":" in Monostate._inner.dut:
-           Monostate._inner.dutType = "BDF Device"
-        elif "mst_dev" in Monostate._inner.dut:
-            Monostate._inner.dutType = "CRspace Device"
-        elif "MTusb" in Monostate._inner.dut:
-            Monostate._inner.dutType = "MTusb Device"
+        if ":" in self._inner.dut:
+            self._inner.dutType = "BDF Device"
+        elif "mst_dev" in self._inner.dut:
+            self._inner.dutType = "CRspace Device"
+        elif "MTusb" in self._inner.dut:
+            self._inner.dutType = "MTusb Device"
         else:
-            Monostate._inner.dutType = "Unknown Device"
-
-
+            self._inner.dutType = "Unknown Device"
 
     def evalServerName(self, serverName):
         if serverName is not "Local":
-            Monostate._inner.serverName = "Remote"
-            Monostate._inner.CliAgent = CLiAgentRemote(serverName)
+            self._inner.serverName = "Remote"
+            self._inner.CliAgent = CLiAgentRemote(serverName)
         else:
-            Monostate._inner.serverName = "Local"
-            Monostate._inner.CliAgent = CliAgentLocal()
+            self._inner.serverName = "Local"
+            self._inner.CliAgent = CliAgentLocal()
 
     def init_MtUsb_input(self):
-        Monostate._inner.mlxDut = True
-        Monostate._inner.dutComponent.resources.set_CRspace_agent(crspace_agent()) #######what is the input for CR space agent
+        self._inner.mlxDut = True
+        self._inner.dutComponent.resources.set_CRspace_agent(crspace_agent()) #######what is the input for CR space agent
 
     def init_BDF_Device_input(self):
-        Monostate._inner.dutComponent.resources.set_Confspace_agent(conf_space_agent(self.dut))
+        self._inner.dutComponent.resources.set_Confspace_agent(conf_space_agent(self._inner.dut))
         # Monostate._inner.dutComponent.resources.conf_space.init_capbilities_table()
         #Monostate._inner.dutComponent.dutComponent.resources.conf_space_agent.setBdf(self.dut)
-        self.find_cr_space(self.dut, "dut")  #self.dut = BDF
+        self.find_cr_space(self._inner.dut, "dut")  #self.dut = BDF
         # now we have all the information about the dut
         self.find_topology()
 
     def init_CRspace_Device_input(self):
-        Monostate._inner.mlxDut = True
-        Monostate._inner.dutComponent.resources.set_CRspace_agent(crspace_agent(self.dut))
-        input = Monostate._inner.dut.split("/")
+        self._inner.mlxDut = True
+        self._inner.dutComponent.resources.set_CRspace_agent(crspace_agent(self._inner.dut))
+        data = self._inner.dut.split("/")
 
         #Monostate._inner.dutComponent.resources.conf_space.init_capbilities_table()
-        self.find_BDF_according_the_device(input[2]) ##the device_number
+        self.find_BDF_according_the_device(data[2]) ##the device_number
         #now we have all the information about the dut
         self.find_topology()
 
     def find_cr_space(self , BDF , name_of_component):
-        temp = "set pci -s" + str(BDF) + "00"
-        vendor_id_pro = VendorIDProperty(self.dutComponent.resources)
+        #temp = "set pci -s" + str(BDF) + "00"
+        vendor_id_pro = VendorIDProperty(self._inner.dutComponent.resources)
         while True:
             status, vendor_ID = vendor_id_pro.get_with_Confspace()
             #status, vendor_ID = Monostate._inner.CliAgent.exec_command(temp) ##command->set pci -s BDF 00 vendorID
@@ -112,88 +110,88 @@ class Monostate:
                 break
             print('try again, BDF not found')
         ##now we have the vendor id
-        Monostate._inner.mlxDut = vendor_id_pro.is_mlx_device()
-        if Monostate._inner.mlxDut: ##mellanox device
+        self._inner.mlxDut = vendor_id_pro.is_mlx_device()
+        if self._inner.mlxDut: ##mellanox device
             temp = "set pci -s" + str(BDF) + "02"
-            device_id = Monostate._inner.CliAgent.exec_command(temp) ##command: set pci -s BDF 02 (device id)
+            device_id = self._inner.CliAgent.exec_command(temp) ##command: set pci -s BDF 02 (device id)
             flag = True
             for device in device_cr_space.keys():
                 if device == device_id:
                     flag = False
                     cr_space_str = device_cr_space[device]
                     if name_of_component == "dut":
-                        self.dutComponent.resources.set_CRspace_agent(crspace_agent(cr_space_str))
+                        self._inner.dutComponent.resources.set_CRspace_agent(crspace_agent(cr_space_str))
                         if self.check_if_dutHasSecureFw():
                             Monostate._inner.dutComponent.resources.CR_space_agent.set_read_only_flag()
                     elif name_of_component == "upstreamComponent":
-                        self.upstreamComponent.resources.set_CRspace_agent(crspace_agent(cr_space_str))
+                        self._inner.upstreamComponent.resources.set_CRspace_agent(crspace_agent(cr_space_str))
                     else:##name_of_component=="downstreamcomponent
-                        self.downstreamComponent.resources.set_CRspace_agent(crspace_agent(cr_space_str))
+                        self._inner.downstreamComponent.resources.set_CRspace_agent(crspace_agent(cr_space_str))
 
             if flag:
                 print("not found this device")
         else:   #no mlx device
             if name_of_component == "dut":
-                self.downstreamComponent.resources.set_CRspace_agent(crspace_agent(None))
+                self._inner.downstreamComponent.resources.set_CRspace_agent(crspace_agent(None))
             elif name_of_component == "upstreamComponent":
-                self.upstreamComponent.resources.set_CRspace_agent(crspace_agent(None))
+                self._inner.upstreamComponent.resources.set_CRspace_agent(crspace_agent(None))
             else:  ##name_of_component=="downstreamcomponent
-                self.downstreamComponent.resources.set_CRspace_agent(crspace_agent(None))
+                self._inner.downstreamComponent.resources.set_CRspace_agent(crspace_agent(None))
 
 
     def check_if_dutHasSecureFw(self):
-        cr_space = self.dutComponent.resources.CR_space_agent.get_CRspace()
+        cr_space = self._inner.dutComponent.resources.CR_space_agent.get_CRspace()
         temp = "flint -d" + str(cr_space) + "q"
-        status, output = Monostate._inner.CliAgent.exec_command(temp)
+        status, output = self._inner.CliAgent.exec_command(temp)
         for line in output:
             if "Security Attributes" in line:
                 data = line.split(":")
                 is_secure = data[1].strip()
                 if 'N/A' == is_secure:
-                    Monostate._inner.dutHasSecureFw = False
+                    self._inner.dutHasSecureFw = False
                     return False
-        Monostate._inner.dutHasSecureFw = True
+        self._inner.dutHasSecureFw = True
         return True
 
-
-    def find_BDF_according_the_device(self,device_number):
+    def find_BDF_according_the_device(self, device_number):
+        name_of_device = ""
         for num in device_name.keys():
             if num == device_number:
                 name_of_device = device_name[num]
+                break
         if name_of_device == "BW":
-            Monostate._inner.dutComponent.resources.set_Confspace_agent(conf_space_agent(self.find_BW_BDF()))
+            self._inner.dutComponent.resources.set_Confspace_agent(conf_space_agent(self.find_BW_BDF()))
             #Monostate._inner.dutComponent.dutComponent.resources.conf_space_agent.setBdf(self.find_BW_BDF())
         elif name_of_device == "Connect_x_5":
-            Monostate._inner.dutComponent.resources.set_Confspace_agent(conf_space_agent(self.find_Connect_x_5_BDF()))
-           # Monostate._inner.dutComponent.dutComponent.resources.conf_space_agent.setBdf(self.find_Connect_x_5_BDF())
+            self._inner.dutComponent.resources.set_Confspace_agent(conf_space_agent(self.find_Connect_x_5_BDF()))
+        # Monostate._inner.dutComponent.dutComponent.resources.conf_space_agent.setBdf(self.find_Connect_x_5_BDF())
         else:
-            Monostate._inner.dutComponent.resources.set_Confspace_agent(conf_space_agent(self.find_other_BDf()))
+            self._inner.dutComponent.resources.set_Confspace_agent(conf_space_agent(self.find_other_BDf()))
             #Monostate._inner.dutComponent.dutComponent.resources.conf_space_agent.setBdf(self.find_other_BDf())
 
-
     def find_BW_BDF(self):
-        primery_bus = Monostate._inner.CliAgent.exec_command("mcra 0X11021c.8")  ##command:mcra 0X11021c.8
+        primery_bus = self._inner.CliAgent.exec_command("mcra 0X11021c.8")  ##command:mcra 0X11021c.8
         bridge = 123 ####################ask
         function = "0"
         BDF = primery_bus+str(2*bridge)+function
         return BDF
 
     def find_Connect_x_5_BDF(self):
-        primery_bus = Monostate._inner.CliAgent.exec_command("mcra 0X11021c.8") ####################ask
+        primery_bus = self._inner.CliAgent.exec_command("mcra 0X11021c.8") ####################ask
         bridge = "123" ####################ask
         function = "0"
         BDF = primery_bus+bridge+function
         return BDF
 
     def find_other_BDf(self):
-        mst_output = Monostate._inner.CliAgent.exec_command("mst status") ####################ask
-        cr_space_str = Monostate._inner.dut
+        mst_output = self._inner.CliAgent.exec_command("mst status") ####################ask
+        cr_space_str = self._inner.dut
         BDF = 0
         for line in mst_output: ##mybee skip the first 7 line ? ?   ?ask
             if cr_space_str in line: ##we are in the line of the match cr space
                 next(line)
                 try: ####catch the BDF
-                   BDF = re.search('fn=(.+?) addr', line).group(1)
+                    BDF = re.search('fn=(.+?) addr', line).group(1)
                 except AttributeError:
                     # fn=, addr not found in the original string
                     BDF = 'BDF not found'
@@ -201,36 +199,36 @@ class Monostate:
         return BDF
 
     def find_topology(self):
-        heder_type_property = HeaderTypeProperty(Monostate._inner.dutComponent.resources)
+        heder_type_property = HeaderTypeProperty(self._inner.dutComponent.resources)
         heder_type = heder_type_property.get() #get the header type
         if heder_type:    ##header_type==1 ->dut is upstream
-            Monostate._inner.dutIsUpstream = True
-            Monostate._inner.upstreamComponent = Monostate._inner.dutComponent
+            self._inner.dutIsUpstream = True
+            self._inner.upstreamComponent =self._inner.dutComponent
             self.find_dsc_component_BDF_conf_space() #find the other side of the link
-            downstream_BDF = Monostate._inner.dwonstreamComponent.resources.conf_space_agent.getBdf()
+            downstream_BDF = self._inner.dwonstreamComponent.resources.conf_space_agent.getBdf()
             self.find_cr_space(downstream_BDF, "downstreamComponent")
         else:
-            Monostate._inner.dutIsUpstream = False
-            Monostate._inner.downstreamComponent = Monostate._inner.dutComponent
+            self._inner.dutIsUpstream = False
+            self._inner.downstreamComponent = self._inner.dutComponent
             self.find_usc_component_BDF_conf_space() ###find the other side of the link
-            upstream_BDF = Monostate._inner.upstreamComponent.resources.conf_space_agent.getBdf()
+            upstream_BDF = self._inner.upstreamComponent.resources.conf_space_agent.getBdf()
             self.find_cr_space(upstream_BDF, "upstreamComponent")
 
 
 
     def find_dsc_component_BDF_conf_space(self):
-        temp = "set pci -s" + Monostate._inner.upstreamComponent.resources.conf_space_agent.getBdf() + "19h"
-        secondary_bus_number = Monostate._inner.CliAgent.exec_command(temp)
-        Monostate._inner.downstreamComponent.resources. set_Confspace_agent(conf_space_agent(secondary_bus_number))
+        temp = "set pci -s" + self._inner.upstreamComponent.resources.conf_space_agent.getBdf() + "19h"
+        secondary_bus_number = self._inner.CliAgent.exec_command(temp)
+        self._inner.downstreamComponent.resources. set_Confspace_agent(conf_space_agent(secondary_bus_number))
         #Monostate._inner.downstreamComponent.resources.conf_space_agent.init_capbilities_table()
         #Monostate._inner.downstreamComponent.resources.conf_space_agent.setBdf(secondary_bus_number) ###ask !
 
 
     def find_usc_component_BDF_conf_space(self):
-        downstream_BDF = Monostate._inner.dwonstreamComponent.resources.conf_space_agent.getBdf()
+        downstream_BDF = self._inner.dwonstreamComponent.resources.conf_space_agent.getBdf()
         temp = "readlink - f / sys / bus / pci / devices /" + str(downstream_BDF) + "19h"
-        upstreanBDF = Monostate._inner.CliAgent.exec_command(temp)
-        Monostate._inner.upstreamComponent.resources. set_Confspace_agent(conf_space_agent(upstreanBDF))
+        upstreanBDF = self._inner.CliAgent.exec_command(temp)
+        self._inner.upstreamComponent.resources. set_Confspace_agent(conf_space_agent(upstreanBDF))
         #Monostate._inner.upstreamComponent.resources.conf_space_agent.init_capbilities_table()
         #Monostate._inner.upstreamComponent.resources.conf_space_agent.setBdf(upstreanBDF) ###ask !
 
