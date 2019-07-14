@@ -122,7 +122,7 @@ class Monostate:
                     if name_of_component == "dut":
                         self._inner.dutComponent.resources.set_CRspace_agent(crspace_agent(cr_space_str))
                         if self.check_if_dutHasSecureFw():
-                            Monostate._inner.dutComponent.resources.CR_space_agent.set_read_only_flag()
+                            self._inner.dutComponent.resources.CR_space_agent.set_read_only_flag()
                     elif name_of_component == "upstreamComponent":
                         self._inner.upstreamComponent.resources.set_CRspace_agent(crspace_agent(cr_space_str))
                     else:##name_of_component=="downstreamcomponent
