@@ -160,9 +160,11 @@ class Monostate:
                 name_of_device = device_name[num]
                 break
         if name_of_device == "BW":
+            self._inner.dutComponent.setIsSwitch(True)
             self._inner.dutComponent.resources.set_Confspace_agent(conf_space_agent(self.find_BW_BDF()))
             #Monostate._inner.dutComponent.dutComponent.resources.conf_space_agent.setBdf(self.find_BW_BDF())
         elif name_of_device == "Connect_x_5":
+            self._inner.dutComponent.setIsSwitch(True)
             self._inner.dutComponent.resources.set_Confspace_agent(conf_space_agent(self.find_Connect_x_5_BDF()))
         # Monostate._inner.dutComponent.dutComponent.resources.conf_space_agent.setBdf(self.find_Connect_x_5_BDF())
         else:
