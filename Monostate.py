@@ -85,9 +85,9 @@ class Monostate:
         Monostate._inner.dutComponent.resources.set_CRspace_agent(crspace_agent()) #######what is the input for CR space agent
 
     def init_BDF_Device_input(self):
-        Monostate._inner.dutComponent.resources.set_Confspace_agent(conf_space_agent())
+        Monostate._inner.dutComponent.resources.set_Confspace_agent(conf_space_agent(self.dut))
         # Monostate._inner.dutComponent.resources.conf_space.init_capbilities_table()
-        Monostate._inner.dutComponent.dutComponent.resources.conf_space_agent.setBdf(self.dut)
+        #Monostate._inner.dutComponent.dutComponent.resources.conf_space_agent.setBdf(self.dut)
         self.find_cr_space(self.dut, "dut")  #self.dut = BDF
         # now we have all the information about the dut
         self.find_topology()
@@ -96,7 +96,7 @@ class Monostate:
         Monostate._inner.mlxDut = True
         Monostate._inner.dutComponent.resources.set_CRspace_agent(crspace_agent(self.dut))
         input = Monostate._inner.dut.split("/")
-        Monostate._inner.dutComponent.resources.set_Confspace_agent(conf_space_agent())
+
         #Monostate._inner.dutComponent.resources.conf_space.init_capbilities_table()
         self.find_BDF_according_the_device(input[2]) ##the device_number
         #now we have all the information about the dut
@@ -143,7 +143,7 @@ class Monostate:
 
     def check_if_dutHasSecureFw(self):
         cr_space = self.dutComponent.resources.CR_space_agent.get_CRspace()
-        temp="flint -d" + str(cr_space) + "q"
+        temp = "flint -d" + str(cr_space) + "q"
         status, output = Monostate._inner.CliAgent.exec_command(temp)
         for line in output:
             if "Security Attributes" in line:
@@ -161,11 +161,14 @@ class Monostate:
             if num == device_number:
                 name_of_device = device_name[num]
         if name_of_device == "BW":
-            Monostate._inner.dutComponent.dutComponent.resources.conf_space_agent.setBdf(self.find_BW_BDF())
+            Monostate._inner.dutComponent.resources.set_Confspace_agent(conf_space_agent(self.find_BW_BDF()))
+            #Monostate._inner.dutComponent.dutComponent.resources.conf_space_agent.setBdf(self.find_BW_BDF())
         elif name_of_device == "Connect_x_5":
-            Monostate._inner.dutComponent.dutComponent.resources.conf_space_agent.setBdf(self.find_Connect_x_5_BDF())
+            Monostate._inner.dutComponent.resources.set_Confspace_agent(conf_space_agent(self.find_Connect_x_5_BDF()))
+           # Monostate._inner.dutComponent.dutComponent.resources.conf_space_agent.setBdf(self.find_Connect_x_5_BDF())
         else:
-            Monostate._inner.dutComponent.dutComponent.resources.conf_space_agent.setBdf(self.find_other_BDf())
+            Monostate._inner.dutComponent.resources.set_Confspace_agent(conf_space_agent(self.find_other_BDf()))
+            #Monostate._inner.dutComponent.dutComponent.resources.conf_space_agent.setBdf(self.find_other_BDf())
 
 
     def find_BW_BDF(self):
@@ -218,18 +221,18 @@ class Monostate:
     def find_dsc_component_BDF_conf_space(self):
         temp = "set pci -s" + Monostate._inner.upstreamComponent.resources.conf_space_agent.getBdf() + "19h"
         secondary_bus_number = Monostate._inner.CliAgent.exec_command(temp)
-        Monostate._inner.downstreamComponent.resources. set_Confspace_agent(conf_space_agent())
+        Monostate._inner.downstreamComponent.resources. set_Confspace_agent(conf_space_agent(secondary_bus_number))
         #Monostate._inner.downstreamComponent.resources.conf_space_agent.init_capbilities_table()
-        Monostate._inner.downstreamComponent.resources.conf_space_agent.setBdf(secondary_bus_number) ###ask !
+        #Monostate._inner.downstreamComponent.resources.conf_space_agent.setBdf(secondary_bus_number) ###ask !
 
 
     def find_usc_component_BDF_conf_space(self):
         downstream_BDF = Monostate._inner.dwonstreamComponent.resources.conf_space_agent.getBdf()
         temp = "readlink - f / sys / bus / pci / devices /" + str(downstream_BDF) + "19h"
         upstreanBDF = Monostate._inner.CliAgent.exec_command(temp)
-        Monostate._inner.upstreamComponent.resources. set_Confspace_agent(conf_space_agent())
+        Monostate._inner.upstreamComponent.resources. set_Confspace_agent(conf_space_agent(upstreanBDF))
         #Monostate._inner.upstreamComponent.resources.conf_space_agent.init_capbilities_table()
-        Monostate._inner.upstreamComponent.resources.conf_space_agent.setBdf(upstreanBDF) ###ask !
+        #Monostate._inner.upstreamComponent.resources.conf_space_agent.setBdf(upstreanBDF) ###ask !
 
 
 # -----------------------------------------------------------------------
