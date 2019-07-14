@@ -40,8 +40,8 @@ class Monostate:
             self.CliAgent = None
 
     def __init__(self, dut="", serverName = "Local"):
-        if Monostate._inner is None:
-            Monostate._inner = Monostate.inner()
+        if self._inner is None:
+            self._inner = Monostate.inner()
             ##   monostate._inner.dut = dut
             self._inner.dut = dut
             self.evalDutType()
