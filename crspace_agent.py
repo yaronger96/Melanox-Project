@@ -3,9 +3,12 @@ class crspace_agent:
 
     def __init__(self, CRspace):
         self.Crspace = CRspace #str
+        self.read_only=False
 
     def get_CRspace(self):
         return self.Crspace
+    def set_read_only_flag(self):
+        self.read_only = True
 
     def mst_read(self,device, address, offset=0, size=32):
         """ perform mst_read for given device, address, offset and size

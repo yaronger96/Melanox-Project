@@ -28,6 +28,9 @@ class conf_space_agent:
     def getBdf(self):
         return self._bdf
 
+    def setBdf(self,BDF):
+        self._bdf = BDF
+
     def exe_cmd(self , cmd, print_cmd = False):
         (status, val) = self._server.exec_agent.execute_job_and_return_returncode_and_output(cmd, print_cmd=print_cmd)
         return status , val
