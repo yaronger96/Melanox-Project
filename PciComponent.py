@@ -1,9 +1,10 @@
 import feature
+from PciResurces import PciResurces
 
 
 class PciComponent(feature.feature):
     def __init__(self):
-        self.resources = None
+        self.resources = PciResurces()
         self.isSwitch = None
         self.deviceName = None
 
