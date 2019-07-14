@@ -113,7 +113,7 @@ class Monostate:
         self._inner.mlxDut = vendor_id_pro.is_mlx_device()
         if self._inner.mlxDut: ##mellanox device
             temp = "set pci -s" + str(BDF) + "02"
-            device_id = self._inner.CliAgent.exec_command(temp) ##command: set pci -s BDF 02 (device id)
+            device_id = self._inner.CliAgent.execute_job_and_return_returncode_and_output(temp) ##command: set pci -s BDF 02 (device id)
             flag = True
             for device in device_cr_space.keys():
                 if device == device_id:
@@ -142,7 +142,7 @@ class Monostate:
     def check_if_dutHasSecureFw(self):
         cr_space = self._inner.dutComponent.resources.CR_space_agent.get_CRspace()
         temp = "flint -d" + str(cr_space) + "q"
-        status, output = self._inner.CliAgent.exec_command(temp)
+        status, output = self._inner.CliAgent.execute_job_and_return_returncode_and_output(temp)
         for line in output:
             if "Security Attributes" in line:
                 data = line.split(":")
@@ -172,21 +172,21 @@ class Monostate:
             #Monostate._inner.dutComponent.dutComponent.resources.conf_space_agent.setBdf(self.find_other_BDf())
 
     def find_BW_BDF(self):
-        primery_bus = self._inner.CliAgent.exec_command("mcra 0X11021c.8")  ##command:mcra 0X11021c.8
+        primery_bus = self._inner.CliAgent.execute_job_and_return_returncode_and_output("mcra 0X11021c.8")  ##command:mcra 0X11021c.8
         bridge = 123 ####################ask
         function = "0"
         BDF = primery_bus+str(2*bridge)+function
         return BDF
 
     def find_Connect_x_5_BDF(self):
-        primery_bus = self._inner.CliAgent.exec_command("mcra 0X11021c.8") ####################ask
+        primery_bus = self._inner.CliAgent.execute_job_and_return_returncode_and_output("mcra 0X11021c.8") ####################ask
         bridge = "123" ####################ask
         function = "0"
         BDF = primery_bus+bridge+function
         return BDF
 
     def find_other_BDf(self):
-        mst_output = self._inner.CliAgent.exec_command("mst status") ####################ask
+        mst_output = self._inner.CliAgent.execute_job_and_return_returncode_and_output("mst status") ####################ask
         cr_space_str = self._inner.dut
         BDF = 0
         for line in mst_output: ##mybee skip the first 7 line ? ?   ?ask
@@ -220,7 +220,7 @@ class Monostate:
 
     def find_dsc_component_BDF_conf_space(self):
         temp = "set pci -s" + self._inner.upstreamComponent.resources.conf_space_agent.getBdf() + "19h"
-        secondary_bus_number = self._inner.CliAgent.exec_command(temp)
+        secondary_bus_number = self._inner.CliAgent.execute_job_and_return_returncode_and_output(temp)
         self._inner.downstreamComponent.resources. set_Confspace_agent(conf_space_agent(secondary_bus_number))
         #Monostate._inner.downstreamComponent.resources.conf_space_agent.init_capbilities_table()
         #Monostate._inner.downstreamComponent.resources.conf_space_agent.setBdf(secondary_bus_number) ###ask !
@@ -229,7 +229,7 @@ class Monostate:
     def find_usc_component_BDF_conf_space(self):
         downstream_BDF = self._inner.dwonstreamComponent.resources.conf_space_agent.getBdf()
         temp = "readlink - f / sys / bus / pci / devices /" + str(downstream_BDF) + "19h"
-        upstreanBDF = self._inner.CliAgent.exec_command(temp)
+        upstreanBDF = self._inner.CliAgent.execute_job_and_return_returncode_and_output(temp)
         self._inner.upstreamComponent.resources. set_Confspace_agent(conf_space_agent(upstreanBDF))
         #Monostate._inner.upstreamComponent.resources.conf_space_agent.init_capbilities_table()
         #Monostate._inner.upstreamComponent.resources.conf_space_agent.setBdf(upstreanBDF) ###ask !
@@ -452,7 +452,7 @@ class conf_space_agent:
 class CliAgentLocal:
     serverName = None
 
-    def __init__(self, ostype):
+    def __init__(self, ostype='Linux'):
         self.osType = ostype
         self.serverName = "Local"
 
