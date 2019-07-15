@@ -16,8 +16,8 @@ device_cr_space={ ##key =device ID , value= CR_space_name
 
 device_name={ ##key =device ID , value= CR_space_name
     "mt4119_pciconf0" : "BW",
-    "mt4117_pciconf0" : "Connect_x_5"
-
+    "mt4117_pciconf0" : "Connect_x_5",
+    "mt4103_pciconf0": "Connect_x_3_pro"
 }
 
 #################################################
@@ -63,7 +63,7 @@ class Monostate:
     def evalDutType(self):
         if ":" in self._inner.dut:
             self._inner.dutType = "BDF Device"
-        elif "mst_dev" in self._inner.dut:
+        elif "mst" in self._inner.dut:
             self._inner.dutType = "CRspace Device"
         elif "MTusb" in self._inner.dut:
             self._inner.dutType = "MTusb Device"
@@ -77,6 +77,8 @@ class Monostate:
         else:
             self._inner.serverName = "Local"
             self._inner.CliAgent = CliAgentLocal()
+        status, output = self._inner.CliAgent.execute_job_and_return_returncode_and_output("mst start")
+        ###################ask what the status of error ? ?
 
     def init_MtUsb_input(self):
         self._inner.mlxDut = True
@@ -86,7 +88,7 @@ class Monostate:
         self._inner.dutComponent.resources.set_Confspace_agent(conf_space_agent(self._inner.dut))
         # Monostate._inner.dutComponent.resources.conf_space.init_capbilities_table()
         #Monostate._inner.dutComponent.dutComponent.resources.conf_space_agent.setBdf(self.dut)
-        self.find_cr_space(self._inner.dut, "dut")  #self.dut = BDF
+        self.find_cr_space("dut")  #self.dut = BDF
         # now we have all the information about the dut
         self.find_topology()
 
@@ -94,13 +96,12 @@ class Monostate:
         self._inner.mlxDut = True
         self._inner.dutComponent.resources.set_CRspace_agent(crspace_agent(self._inner.dut))
         data = self._inner.dut.split("/")
-
         #Monostate._inner.dutComponent.resources.conf_space.init_capbilities_table()
-        self.find_BDF_according_the_device(data[2]) ##the device_number
+        self.find_BDF_according_the_device(data[3]) ##the device_number
         #now we have all the information about the dut
         self.find_topology()
 
-    def find_cr_space(self , BDF , name_of_component):
+    def find_cr_space(self,name_of_component):
         #temp = "set pci -s" + str(BDF) + "00"
         vendor_id_pro = VendorIDProperty(self._inner.dutComponent.resources)
         while True:
@@ -112,8 +113,14 @@ class Monostate:
         ##now we have the vendor id
         self._inner.mlxDut = vendor_id_pro.is_mlx_device()
         if self._inner.mlxDut: ##mellanox device
-            temp = "set pci -s" + str(BDF) + "02"
-            device_id = self._inner.CliAgent.execute_job_and_return_returncode_and_output(temp) ##command: set pci -s BDF 02 (device id)
+            #temp = "set pci -s" + str(BDF) + "02"
+            #device_id = self._inner.CliAgent.execute_job_and_return_returncode_and_output(temp) ##command: set pci -s BDF 02 (device id)
+            if name_of_component == 'dut':
+                status1, device_id = self._inner.dutComponent.resources.conf_space_agent.read_header(0x02, 0, 16)
+            elif name_of_component == 'upstreamComponent':
+                status1, device_id = self._inner.upstreamComponent.resources.conf_space_agent.read_header(0x02, 0, 16)
+            else:
+                status1, device_id = self._inner.downstreamComponent.resources.conf_space_agent.read_header(0x02, 0, 16)
             flag = True
             for device in device_cr_space.keys():
                 if device == device_id:
@@ -172,24 +179,24 @@ class Monostate:
             #Monostate._inner.dutComponent.dutComponent.resources.conf_space_agent.setBdf(self.find_other_BDf())
 
     def find_BW_BDF(self):
-        primery_bus = self._inner.CliAgent.execute_job_and_return_returncode_and_output("mcra 0X11021c.8")  ##command:mcra 0X11021c.8
+        status, primery_bus = self._inner.CliAgent.execute_job_and_return_returncode_and_output("mcra 0X11021c.8")  ##command:mcra 0X11021c.8
         bridge = 123 ####################ask
         function = "0"
         BDF = primery_bus+str(2*bridge)+function
         return BDF
 
     def find_Connect_x_5_BDF(self):
-        primery_bus = self._inner.CliAgent.execute_job_and_return_returncode_and_output("mcra 0X11021c.8") ####################ask
+        status, primery_bus = self._inner.CliAgent.execute_job_and_return_returncode_and_output("mcra 0X11021c.8") ####################ask
         bridge = "123" ####################ask
         function = "0"
         BDF = primery_bus+bridge+function
         return BDF
 
     def find_other_BDf(self):
-        mst_output = self._inner.CliAgent.execute_job_and_return_returncode_and_output("mst status") ####################ask
+        status, mst_output = self._inner.CliAgent.execute_job_and_return_returncode_and_output("mst status") ####################ask
         cr_space_str = self._inner.dut
         BDF = 0
-        for line in mst_output: ##mybee skip the first 7 line ? ?   ?ask
+        for line in mst_output.split('/n'): ##mybee skip the first 7 line ? ?   ?ask
             if cr_space_str in line: ##we are in the line of the match cr space
                 next(line)
                 try: ####catch the BDF
@@ -207,14 +214,15 @@ class Monostate:
             self._inner.dutIsUpstream = True
             self._inner.upstreamComponent =self._inner.dutComponent
             self.find_dsc_component_BDF_conf_space() #find the other side of the link
-            downstream_BDF = self._inner.dwonstreamComponent.resources.conf_space_agent.getBdf()
-            self.find_cr_space(downstream_BDF, "downstreamComponent")
+            downstream_BDF = self._inner.downstreamComponent.resources.conf_space_agent.getBdf()
+            self.find_cr_space("downstreamComponent")
         else:
             self._inner.dutIsUpstream = False
             self._inner.downstreamComponent = self._inner.dutComponent
+            print self._inner.downstreamComponent.resources.get_CRspace_agent().get_CRspace()
             self.find_usc_component_BDF_conf_space() ###find the other side of the link
             upstream_BDF = self._inner.upstreamComponent.resources.conf_space_agent.getBdf()
-            self.find_cr_space(upstream_BDF, "upstreamComponent")
+            self.find_cr_space("upstreamComponent")
 
 
 
