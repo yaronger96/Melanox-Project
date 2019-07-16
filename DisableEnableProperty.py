@@ -8,7 +8,9 @@ class DisableEnableProperty(PciProperty):
 
 
     def get_with_Confspace(self): ##### maybee need to casting to hex !!!!
-        pass
+        ConfSpace_agent = self.Property_resurces.get_Confspace_agent()
+        link_speed = ConfSpace_agent.read(0x10, False, 0x10, 4, 1)
+        return link_speed
 
     def get_with_CliAgent(self):
         pass

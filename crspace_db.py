@@ -28,7 +28,9 @@ class crspace_and_nic: #key=CrSpcae , value=nic
 
 class crspace_shomron:
     REGISTERS = {
-        'current_link_speed': [0xf3804, 0, 2],
+        'current_link_speed': [0x11f464, 0, 3],
+        'speed_en': [0x11f434, 12, 3],
+        'negotiated_link_width': [0x11f464, 8, 6],
         'fsm_0_speed_en': [0x11f434, 12, 3],
         'port_state': [0xf3810, 0, 8],
         'cx3_directed_width': [0xf39b0, 0, 4],
@@ -36,16 +38,23 @@ class crspace_shomron:
         'tx_polarity': [0xf3888, 0, 8],
         'spare_top4x_0': [0xf22b0, 24, 8],
         'spare_top4x_1': [0xf24b0, 24, 8],
+        'device_id': [0x0014, 0, 16],
     }
 
 
 class crspace_dotan:
     REGISTERS = {
+        'current_link_speed': [0xf3804, 0, 2],
+        'speed_en': [0x11f434, 12, 3],
+        'negotiated_link_width': [0x11f464, 8, 6],
         'fsm_0_speed_en': [0x11f434, 12, 3],
     }
 
 class crspace_galil:
     REGISTERS = {
+        'current_link_speed': [0x11f464, 0, 3],
+        'speed_en': [0x11f434, 12, 3],
+        'negotiated_link_width': [0x11f464, 8, 6],
         'perf_selector2': [0x10fa84, 16, 16],
         'perf_counter2': [0x10fac8, 0, 32],
 
@@ -73,6 +82,9 @@ class crspace_galil:
 
 class crspace_bluefield:
     REGISTERS = {
+        'current_link_speed': [0x11f464, 0, 3],
+        'speed_en': [0x11f434, 12, 3],
+        'negotiated_link_width': [0x11f464, 8, 6],
 
 #registers for enable VDM
         'vdm_gw[8].desc0.data_1151_1120': [0x185b70, 0, 32, 0x72000010],
@@ -139,5 +151,8 @@ class crspace_bluefield:
 
 class crspace_negev:
     REGISTERS = {
+        'current_link_speed': [0x11f464, 0, 3],
+        'speed_en': [0x11f434, 12, 3],
+        'negotiated_link_width': [0x11f464, 8, 6],
         'fsm_0_speed_en': [0x11f434, 12, 3],
     }

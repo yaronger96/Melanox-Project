@@ -10,7 +10,7 @@ class DisableEnableOp(Operation):
         dsc = server._inner.downstreamComponent
         disableenableprop = DisableEnableProperty(usc.resources)
         disableenableprop.set_with_Confspace(1)
-        time.sleep(0.1)
+        time.sleep(0.32)
         disableenableprop.set_with_Confspace(0)
         if usc.isSwitch():
             self.rescanPciBuses()
