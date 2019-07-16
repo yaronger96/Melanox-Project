@@ -1,67 +1,89 @@
 from crspace_db import crspace_shomron
 from crspace_db import crspace_dotan
 from crspace_db import crspace_galil
-from crspace_db import crspace_bluefield
-from crspace_db import crspace_negev
+from crspace_db import crspace_bluefield_pcore0
+from crspace_db import crspace_bluefield_pcore1
+from crspace_db import crspace_negev_pcore0
+from crspace_db import crspace_negev_pcore1
 from crspace_db import crspace_and_nic
+from abc import abstractmethod
 
 class PciProperty:
     def __init__(self, resurces):
         self.Property_resurces = resurces
 
+
     def get(self):
-        try:
-            if self.Property_resurces.Is_CRspace_exist():
-                self.get_with_CRspace()
-        except NotImplementedError:
-            return
-        try:
-            if self.Property_resurces.Is_Confspace_exist():
-                self.get_with_Confspace()
-        except NotImplementedError:
-            return
-        try:
+        if self.Property_resurces.Is_CRspace_exist():
+            self.get_with_CRspace()
+        elif self.Property_resurces.Is_Confspace_exist():
+            self.get_with_Confspace()
+        else:
             self.get_with_CliAgent()
-        except NotImplementedError:
-            return
+        # try:
+        #     if self.Property_resurces.Is_CRspace_exist():
+        #         self.get_with_CRspace()
+        # except NotImplementedError:
+        #     return
+        # try:
+        #     if self.Property_resurces.Is_Confspace_exist():
+        #         self.get_with_Confspace()
+        # except NotImplementedError:
+        #     return
+        # try:
+        #     self.get_with_CliAgent()
+        # except NotImplementedError:
+        #     return
 
     def set(self, value):
-        try:
-            if self.Property_resurces.Is_CRspace_exist():
-                self.set_with_CRspace(value)
-        except NotImplementedError:
-            return
-        try:
-            if self.Property_resurces.Is_Confspace_exist():
-                self.set_with_Confspace(value)
-        except NotImplementedError:
-            return
-        try:
+        if self.Property_resurces.Is_CRspace_exist():
+            self.set_with_CRspace(value)
+        elif self.Property_resurces.Is_Confspace_exist():
+            self.set_with_Confspace(value)
+        else:
             self.set_with_CliAgent(value)
-        except NotImplementedError:
-            return
+        # try:
+        #     if self.Property_resurces.Is_CRspace_exist():
+        #         self.set_with_CRspace(value)
+        # except NotImplementedError:
+        #     return
+        # try:
+        #     if self.Property_resurces.Is_Confspace_exist():
+        #         self.set_with_Confspace(value)
+        # except NotImplementedError:
+        #     return
+        # try:
+        #     self.set_with_CliAgent(value)
+        # except NotImplementedError:
+        #     return
 
+    @abstractmethod
     def get_with_CRspace(self):
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     def get_with_Confspace(self):
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     def get_with_CliAgent(self):
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     def set_with_CRspace(self, value):
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     def set_with_Confspace(self, value):
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     def set_with_CliAgent(self, value):
-        raise NotImplementedError
+        pass
 
     def getDataFromCrspaceDb(self, _reg_name):
         Cr_agent = self.Property_resurces.get_CRspace_agent()
-        Crspace = Cr_agent.get_CRspace()  ##/ dev / mst / mtxxxx_pciconf0
+        Crspace = Cr_agent.get_CRspace()  ##for do--> / dev / mst / mtxxxx_pciconf0
         device = Crspace
         temp_dict = crspace_and_nic().CrSpace_dict
         device_name = None

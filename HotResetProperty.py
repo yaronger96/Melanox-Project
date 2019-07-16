@@ -12,7 +12,7 @@ class HotResetProperty(PciProperty):
 
     def get_with_Confspace(self): ##### maybee need to casting to hex !!!!
         ConfSpace_agent = self.Property_resurces.get_Confspace_agent()
-        hot_reset = ConfSpace_agent.read(0x00, False, 0x3E, 6, 1)
+        hot_reset = ConfSpace_agent.read(0x3E, False, 0x3E, 6, 1)
         return hot_reset
 
     def get_with_CliAgent(self):
@@ -22,11 +22,11 @@ class HotResetProperty(PciProperty):
         device, address, offset, size = self.getDataFromCrspaceDb('?????????????????????????')
         if device is 'error' & address is 'error' & offset is 'error' & size is 'error':
             print "error with get the data from CR_space"
-        return self.Property_resurces.get_CRspace_agent().mst_write(device, address, int(value), offset, size)
+        return self.Property_resurces.get_CRspace_agent().mst_write(device, address, hex(value), offset, size)
 
     def set_with_Confspace(self, value):
         ConfSpace_agent = self.Property_resurces.get_Confspace_agent()
-        updated_flag = ConfSpace_agent.write(0x00, False, 0x3E, 6, 1, int(value))
+        updated_flag = ConfSpace_agent.write(0x3E, False, 0x3E, 6, 1, hex(value))
         return updated_flag  #return the value in the reg after the change
 
     def set_with_CliAgent(self, value):

@@ -20,11 +20,11 @@ class WidthProperty(PciProperty):
         device, address, offset, size = self.getDataFromCrspaceDb('negotiated_link_width')
         if device is 'error' & address is 'error' & offset is 'error' & size is 'error':
             print "error with get the data from CR_space"
-        return self.Property_resurces.get_CRspace_agent().mst_write(device, address, int(value), offset, size)
+        return self.Property_resurces.get_CRspace_agent().mst_write(device, address, hex(value), offset, size)
 
     def set_with_Confspace(self, value):
         ConfSpace_agent = self.Property_resurces.get_Confspace_agent()
-        link_target_updated = ConfSpace_agent.write(0x10, False, 0x12, 4, 6, int(value))
+        link_target_updated = ConfSpace_agent.write(0x10, False, 0x12, 4, 6, hex(value))
         return link_target_updated  # return the value in the reg after the change
 
     def set_with_CliAgent(self, value):
