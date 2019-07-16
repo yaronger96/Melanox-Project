@@ -1,18 +1,19 @@
 from PciProperty import PciProperty
 
 
-class SpeedProperty(PciProperty):
+class HotResetProperty(PciProperty):
 
     def get_with_CRspace(self):
-        device, address, offset, size = self.getDataFromCrspaceDb('current_link_speed')
+        device, address, offset, size = self.getDataFromCrspaceDb('???')
         if device is 'error' & address is 'error' & offset is 'error' & size is 'error':
             print "error with get the data from CR_space"
         return self.Property_resurces.get_CRspace_agent().mst_read(device, address, offset, size)
 
+
     def get_with_Confspace(self): ##### maybee need to casting to hex !!!!
         ConfSpace_agent = self.Property_resurces.get_Confspace_agent()
-        link_speed = ConfSpace_agent.read(0x10, False, 0x12, 0, 4)
-        return link_speed
+        hot_reset = ConfSpace_agent.read(0x00, False, 0x3E, 6, 1)
+        return hot_reset
 
     def get_with_CliAgent(self):
         pass
@@ -25,9 +26,8 @@ class SpeedProperty(PciProperty):
 
     def set_with_Confspace(self, value):
         ConfSpace_agent = self.Property_resurces.get_Confspace_agent()
-        link_target_updated = ConfSpace_agent.write(0x10, False, 0x30, 0, 4, int(value))
-        retrain_link = ConfSpace_agent.write(0x10, False, 0x10, 5, 1, 1) ######chang !
-        return link_target_updated  #return the value in the reg after the change
+        updated_flag = ConfSpace_agent.write(0x00, False, 0x3E, 6, 1, int(value))
+        return updated_flag  #return the value in the reg after the change
 
     def set_with_CliAgent(self, value):
         pass

@@ -14,13 +14,13 @@ class PciResurces(feature.feature):
         print "This is the CR space:{}\n".format(self.CR_space_agent.get_CRspace())
         print "This is the Configuration space:{}\n".format(self.conf_space_agent.get_bdf())
 
-    def is_CRspace_exist(self):
+    def Is_CRspace_exist(self):
         if self.CR_space_agent.get_CRspace() is None:
             return 1
         else:
             return 0
 
-    def is_Confspace_exist(self):
+    def Is_Confspace_exist(self):
         if self.conf_space_agent.get_bdf() is None:
             return 1
         else:
