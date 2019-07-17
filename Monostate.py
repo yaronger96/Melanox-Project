@@ -53,8 +53,8 @@ class Monostate:
             self.evalDutType()
             self.evalServerName(serverName)
             self._inner.dutComponent = PciComponent.PciComponent()
-            self._inner.upstreamComponent = PciComponent.PciComponent()
-            self._inner.downstreamComponent = PciComponent.PciComponent()
+            self._inner.upstreamComponent = PciComponent.PciComponent("usc")
+            self._inner.downstreamComponent = PciComponent.PciComponent("dsc")
             if self._inner.dutType == "BDF Device":
                 self.init_BDF_Device_input()
             elif self._inner.dutType == "CRspace Device":
