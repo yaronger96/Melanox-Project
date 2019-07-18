@@ -3,10 +3,14 @@ from PciResurces import PciResurces
 
 
 class PciComponent(feature.feature):
-    def __init__(self):
+    def __init__(self,uscOrDsc = 'dut'):
         self.resources = PciResurces()
         self.isSwitch = None
         self.deviceName = None
+        self.uscOrDsc = uscOrDsc
+
+    def getUscOrDsc(self):
+        return self.uscOrDsc
 
     def getResourcse(self):
         return self.resources

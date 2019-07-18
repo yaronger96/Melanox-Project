@@ -20,11 +20,8 @@ class crspace_and_nic: #key=CrSpcae , value=nic
         '/dev/mst/mt4117_pciconf0': 'crspace_dotan',
         '/dev/mst/mt4119_pciconf0': 'crspace_galil',
         '/dev/mst/mt4121_pciconf0': 'crspace_galil',
-        '/dev/mst/mt41682_pciconf0': 'crspace_bluefield_pcore0',
-        '/dev/mst/mt41682_pciconf0': 'crspace_bluefield_pcore1',
-        '/dev/mst/mt4113_pciconf0': 'crspace_negev_pcore0',
-        '/dev/mst/mt4113_pciconf0': 'crspace_negev_pcore1',
-        
+        '/dev/mst/mt41682_pciconf0': ['crspace_bluefield_pcore0','crspace_bluefield_pcore1'],
+        '/dev/mst/mt4113_pciconf0': ['crspace_negev_pcore0','crspace_negev_pcore1'],
     }
 
 #order for fields: address, offset, size, default_value, spaces_for_next_element, number_of_available_next_elements
@@ -42,6 +39,8 @@ class crspace_shomron:
         'spare_top4x_0': [0xf22b0, 24, 8],
         'spare_top4x_1': [0xf24b0, 24, 8],
         'device_id': [0x0014, 0, 16],
+        'active_host_space': [0X11fd88, 0 , 3],
+        'cfgwr0_compliter_id': [0X1000C0, 0 , 16],  #address for port 0
     }
 
 
@@ -51,6 +50,8 @@ class crspace_dotan:
         'speed_en': [0x11f434, 12, 3],
         'negotiated_link_width': [0x11f464, 8, 6],
         'fsm_0_speed_en': [0x11f434, 12, 3],
+        'active_host_space': [0X11fd88, 0, 3],
+        'cfgwr0_compliter_id': [0X1000C0, 0, 16] , # address for port 0
     }
 
 class crspace_galil:
@@ -81,6 +82,9 @@ class crspace_galil:
         'fsm[0]_fw_directed_speed_change': [0x137010, 1, 1,1],
         'fsm[8]_fw_directed_speed_change': [0x137810, 1, 1,1],
         'fsm[0]_current_link_speed': [0x137064, 0, 3],
+
+        'active_host_space': [0X126D40, 0, 16],
+        'cfgwr0_compliter_id': [0X108340, 0, 16],  # address for port 0
     }
 
 class crspace_bluefield_pcore0:
