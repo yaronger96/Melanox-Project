@@ -24,7 +24,8 @@ device_name = {  ##key =device ID , value= CR_space_name
     "mt4119_pciconf0": "BW",
     "mt4117_pciconf0": "Connect_x_5",
     "mt4103_pciconf0": "Connect_x_3_pro"
-
+    hex(41682): "/dev/mst/mt41682_pciconf0",
+    hex(6517) : "/dev/mst/mt41682_pciconf0"
 }
 
 
@@ -152,7 +153,7 @@ class Monostate:
 
             if flag:
                 print("not found this device")
-        elif not self._inner.mlxDut or flag:  # no mlx device
+        if not self._inner.mlxDut or flag:  # no mlx device
             if name_of_component == "dut":
                 self._inner.dutComponent.resources.set_CRspace_agent(crspace_agent(None))
             elif name_of_component == "upstreamComponent":
