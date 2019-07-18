@@ -7,6 +7,9 @@ sys.path.insert(0,'/auto/sw_work/fwshared/c_yarong/pci_verification/student_proj
 import PciComponent
 import HeaderTypeProperty
 import VendorIDProperty
+import ActiveHostProperty
+import CompliterIdProperty
+
 import datetime
 import time
 import subprocess
@@ -23,9 +26,10 @@ device_cr_space = {  ##key =device ID , value= CR_space_name
 device_name = {  ##key =device ID , value= CR_space_name
     "mt4119_pciconf0": "BW",
     "mt4117_pciconf0": "Connect_x_5",
-    "mt4103_pciconf0": "Connect_x_3_pro"
-    hex(41682): "/dev/mst/mt41682_pciconf0",
-    hex(6517) : "/dev/mst/mt41682_pciconf0"
+    "mt4103_pciconf0": "Connect_x_3_pro",
+    '/dev/mst/mt4115_pciconf0': 'shomron',
+    '/dev/mst/mt4117_pciconf0': 'dotan',
+
 }
 
 
@@ -114,6 +118,7 @@ class Monostate:
         self.find_BDF_according_the_device(data[3])
         ##the device_number
         # now we have all the information about the dut
+        self.findPortNumber(self._inner.dutPortNumber, self._inner.dutComponent)
         self.find_topology()
 
     def find_cr_space(self, name_of_component):
@@ -170,15 +175,50 @@ class Monostate:
             return False
 
     def findPortNumber(self, portNumber, pciComponent):
+        componentCrSpace = pciComponent.resources.CR_space_agent.get_CRspace()
+        if componentCrSpace is None:
+            pciComponent.resources.CR_space_agent.setPortNumber('None')
         if pciComponent.getIsSwitch():
             if portNumber is None:
-                print "the DUT is switch , you must provide port number in the input"
+                print "the device is switch , you must provide port number in the input"
                 exit(1)
             if self._inner.dutPortNumber < 0:
                 print "port number can not be less then 0 please try again"
-            self._inner.dutComponent.resources.CR_space_agent.setPortNumber(self._inner.dutPortNumber)
+            pciComponent.resources.CR_space_agent.setPortNumber(self._inner.dutPortNumber)
         else:
-            //////////////////////////
+            activeHost =ActiveHostProperty.ActiveHostProperty(pciComponent.resources).get_with_CRspace()
+            compliterId = CompliterIdProperty.CompliterIdProperty(pciComponent.resources)
+            busOfTheComponent = bdf_feature.bdf_feature(bdf=pciComponent.resources.conf_space_agent.getBdf())
+            if device_name[componentCrSpace] == 'shomron' or  device_name[componentCrSpace]=='dotan' :
+                for port in range(activeHost):
+                    compliterId.set_port_number(port)
+                    if busOfTheComponent == compliterId.get_with_CRspace():
+                        pciComponent.resources.CR_space_agent.setPortNumber(port)
+                if pciComponent.resources.CR_space_agent.getPortNumber() is None:
+                    print "cant find port number , probabely BDF wrong "
+                    exit(1)
+            else:
+                mask=0b0000000000000001
+                for port in range(16):
+                    if activeHost & mask != 0 :
+                        compliterId.set_port_number(port)
+                        if busOfTheComponent == compliterId.get_with_CRspace():
+                            pciComponent.resources.CR_space_agent.setPortNumber(port)
+                            break
+                    mask = mask<<1
+                if pciComponent.resources.CR_space_agent.getPortNumber() is None:
+                    print "cant find port number , probabely BDF wrong "
+                    exit(1)
+
+
+
+
+            'active_host_space': [0X126D40, 0, 16],
+            'cfgwr0_compliter_id'
+            device, address, offset, size = self.getDataFromCrspaceDb('?????????????????????????')
+            if device is 'error' & address is 'error' & offset is 'error' & size is 'error':
+                print "error with get the data from CR_space"
+            return self.Property_resurces.get_CRspace_agent().mst_write(device, address, hex(value), offset, size)
 
 
     def check_if_dutHasSecureFw(self):
@@ -257,6 +297,7 @@ class Monostate:
             self._inner.upstreamComponent = self._inner.dutComponent
             self.find_dsc_component_BDF_conf_space()  # find the other side of the link
             self.find_cr_space("downstreamComponent")
+            self.findPortNumber(self._inner.dutPortNumber, self._inner.downstreamComponent)
         else:
             self._inner.dutIsUpstream = False
             self._inner.downstreamComponent = self._inner.dutComponent
