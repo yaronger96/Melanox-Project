@@ -1,16 +1,28 @@
-
+from abc import abstractmethod
+from EventHendler import EventHendler
 
 class verifier:
-    def __init__(self, value_to_compare):
-        self.value_to_compare = value_to_compare
+    def __init__(self, value_to_compare, component,iter):
+        self.valueToCompare = value_to_compare
+        self.correntValue = value_to_compare
+        self.componentForVerifier = component
+        self.eventHendler = EventHendler()
+        self.iter = iter
 
-    def causeCheck(self):
+    @abstractmethod
+    def getValue(self):
         pass
 
-    def capabilityCheck(self, value):
+    @abstractmethod
+    def eval(self,):
         pass
 
-    def thresholdCheck(self):
+    @abstractmethod
+    def clean(self):
+        pass
+
+    @abstractmethod
+    def clean(self):
         pass
 
 

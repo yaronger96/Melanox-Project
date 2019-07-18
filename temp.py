@@ -28,6 +28,11 @@ def main():
     p2 = point(3, 5)
     print p1 == p2
     print p1 != p2
+    print "lee"
+    x = 0X1000C0
+    print x
+    y=int(0x80)
+    print int(x+y)
 
 
 if __name__=='__main__':
