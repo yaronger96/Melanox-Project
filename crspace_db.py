@@ -25,7 +25,7 @@ class crspace_and_nic: #key=CrSpcae , value=nic
     }
 
 #order for fields: address, offset, size, default_value, spaces_for_next_element, number_of_available_next_elements
-
+#in every class must provide the jump between port in each reg
 class crspace_shomron:
     REGISTERS = {
         'current_link_speed': [0x11f464, 0, 3],
@@ -41,6 +41,7 @@ class crspace_shomron:
         'device_id': [0x0014, 0, 16],
         'active_host_space': [0X11fd88, 0 , 3],
         'cfgwr0_compliter_id': [0X1000C0, 0 , 16],  #address for port 0
+        'jump_between_compliter': [0, 0x80, 0]
     }
 
 
@@ -51,7 +52,8 @@ class crspace_dotan:
         'negotiated_link_width': [0x11f464, 8, 6],
         'fsm_0_speed_en': [0x11f434, 12, 3],
         'active_host_space': [0X11fd88, 0, 3],
-        'cfgwr0_compliter_id': [0X1000C0, 0, 16] , # address for port 0
+        'cfgwr0_compliter_id': [0X1000C0, 0, 16],# address for port 0
+        'jump_between_compliter': [0, 0x80, 0],
     }
 
 class crspace_galil:
@@ -85,6 +87,7 @@ class crspace_galil:
 
         'active_host_space': [0X126D40, 0, 16],
         'cfgwr0_compliter_id': [0X108340, 0, 16],  # address for port 0
+        'jump_between_compliter': [0, 0x10, 0]
     }
 
 class crspace_bluefield_pcore0:

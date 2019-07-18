@@ -111,7 +111,7 @@ class PciProperty:
                     offset = data_base[data][1]
                     size = data_base[data][2]
                     return device, address, offset, size
-        print ("not fount the current_link_speed in the {} data base".format(device_name))
+        print ("not fount the {} in the {} data base".format(_reg_name,device_name))
         return 'error', 'error', 'error', 'error'
 
 
