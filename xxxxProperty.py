@@ -1,21 +1,17 @@
 from PciProperty import PciProperty
 
 
-class RxErrorProperty(PciProperty):
+class PxdCauseProperty(PciProperty):
     def get_with_CRspace(self):
-        device, address, offset, size = self.getDataFromCrspaceDb('rx_errors_get')
+        device, address, offset, size = self.getDataFromCrspaceDb('??????????????')
         if device is 'error' & address is 'error' & offset is 'error' & size is 'error':
             print "error with get the data from CR_space"
-        jump_between_port = self.get_RxError_jump()
-        if self.getPcoreNum() is None:
-            address += jump_between_port * self.Property_resurces.CR_space_agent.getPortNumber()
-        else:
-            mod = self.getModAccordingPcoreNum()
-            address += jump_between_port * (self.Property_resurces.CR_space_agent.getPortNumber() % mod)
+        jump_between_port = self.get_compliter_id_jump()
+        address += jump_between_port * self.Property_resurces.CR_space_agent.getPortNumber()
         return self.Property_resurces.get_CRspace_agent().mst_read(device, address, offset, size)
 
-    def get_RxError_jump(self): ##### the device,address,size not use
-        device, address, jump, size = self.getDataFromCrspaceDb('jump_between_RxError_get')
+    def get_compliter_id_jump(self): ##### the device,address,size not use
+        device, address, jump, size = self.getDataFromCrspaceDb('jump_between_???????????/')
         if jump is 'error':
             return 0 #if i dint have the data about the jump I dont jump
         return jump

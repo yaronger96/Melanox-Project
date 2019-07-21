@@ -29,8 +29,13 @@ class crspace_and_nic: #key=CrSpcae , value=nic
 class crspace_shomron:
     REGISTERS = {
         'current_link_speed': [0x11f464, 0, 3],
+        'jump_between_current_link_speed': [0, 0x100, 0],
         'speed_en': [0x11f434, 12, 3],
+        'jump_between_speed_en': [0, 0x100, 0],
+        'fw_directed_speed_change': [0x11f410, 1, 1],
+        'jump_between_fw_directed_speed_change': [0, 0x100, 0],
         'negotiated_link_width': [0x11f464, 8, 6],
+        'jump_between_negotiated_link_width': [0, 0x100, 0],
         'fsm_0_speed_en': [0x11f434, 12, 3],
         'port_state': [0xf3810, 0, 8],
         'cx3_directed_width': [0xf39b0, 0, 4],
@@ -58,8 +63,14 @@ class crspace_shomron:
 class crspace_dotan:
     REGISTERS = {
         'current_link_speed': [0x11f464, 0, 3],
+        'jump_between_current_link_speed': [0, 0x100, 0],
         'speed_en': [0x11f434, 12, 3],
+        'jump_between_speed_en': [0, 0x100, 0],
+        'fw_directed_speed_change': [0x11f410, 1, 1],
+        'jump_between_fw_directed_speed_change': [0, 0x100, 0],
+
         'negotiated_link_width': [0x11f464, 8, 6],
+        'jump_between_negotiated_link_width': [0, 0x100, 0],
         'fsm_0_speed_en': [0x11f434, 12, 3],
         'active_host_space': [0X11fd88, 0, 3],
         'cfgwr0_compliter_id': [0X1000C0, 0, 16],# address for port 0
@@ -78,8 +89,14 @@ class crspace_dotan:
 class crspace_galil:
     REGISTERS = {
         'current_link_speed': [0x137064, 0, 3],
-        'speed_en': [0x137034, 12, 3],
+        'jump_between_current_link_speed': [0, 0x100, 0],
+        'speed_en': [0x137034, 12, 4],
+        'jump_between_speed_en': [0, 0x100, 0],
+        'fw_directed_speed_change': [0x137010, 1, 1],
+        'jump_between_fw_directed_speed_change': [0, 0x100, 0],
+
         'negotiated_link_width': [0x137064, 8, 6],
+        'jump_between_negotiated_link_width': [0, 0x100, 0],
         'perf_selector2': [0x10fa84, 16, 16],
         'perf_counter2': [0x10fac8, 0, 32],
 
@@ -121,8 +138,13 @@ class crspace_galil:
 class crspace_bluefield_pcore0:
     REGISTERS = {
         'current_link_speed': [0x137064, 0, 3],
-        'speed_en': [0x177034, 12, 3],
+        'jump_between_current_link_speed': [0, 0x100, 0],
+        'speed_en': [0x137034, 12, 4],
+        'jump_between_speed_en': [0, 0x100, 0],
+        'fw_directed_speed_change': [0x137010, 1, 1],
+        'jump_between_fw_directed_speed_change': [0, 0x100, 0],
         'negotiated_link_width': [0x137064, 8, 6],
+        'jump_between_negotiated_link_width': [0, 0x100, 0],
 
 #registers for enable VDM
         'vdm_gw[8].desc0.data_1151_1120': [0x185b70, 0, 32, 0x72000010],
@@ -199,8 +221,13 @@ class crspace_bluefield_pcore0:
 class crspace_bluefield_pcore1:
     REGISTERS = {
         'current_link_speed': [0x177064, 0, 3],
-        'speed_en': [0x177034, 12, 3],
+        'jump_between_current_link_speed': [0, 0x100, 0],
+        'speed_en': [0x177034, 12, 4],
+        'jump_between_speed_en': [0, 0x100, 0],
+        'fw_directed_speed_change': [0x177010, 1, 1],
+        'jump_between_fw_directed_speed_change': [0, 0x100, 0],
         'negotiated_link_width': [0x177064, 8, 6],
+        'jump_between_negotiated_link_width': [0, 0x100, 0],
 
 #registers for enable VDM
         'vdm_gw[8].desc0.data_1151_1120': [0x185b70, 0, 32, 0x72000010],
@@ -277,8 +304,13 @@ class crspace_bluefield_pcore1:
 class crspace_negev_pcore0:
     REGISTERS = {
         'current_link_speed': [0x157064, 0, 3],
-        'speed_en': [0x157034, 12, 3],
-        'negotiated_link_width': [0x11f464, 8, 6],
+        'jump_between_current_link_speed': [0, 0x100, 0],
+        'speed_en': [0x157034, 12, 4],
+        'jump_between_speed_en': [0, 0x100, 0],
+        'fw_directed_speed_change': [0x157010, 1, 1],
+        'jump_between_fw_directed_speed_change': [0, 0x100, 0],
+        'negotiated_link_width': [0x157064, 8, 6],
+        'jump_between_negotiated_link_width': [0, 0x100, 0],
         'fsm_0_speed_en': [0x157064, 12, 3],
         # cause
         'rx_errors_get': [0x15b01c, 0, 32],
@@ -294,9 +326,14 @@ class crspace_negev_pcore0:
 
 class crspace_negev_pcore1:
     REGISTERS = {
-        'current_link_speed': [0x1D7064, 0, 3],
-        'speed_en': [0x1D7034, 12, 3],
+        'current_link_speed': [0x1d7064, 0, 3],
+        'jump_between_current_link_speed': [0, 0x100, 0],
+        'speed_en': [0x1d7034, 12, 4],
+        'jump_between_speed_en': [0, 0x100, 0],
+        'fw_directed_speed_change': [0x1d7010, 1, 1],
+        'jump_between_fw_directed_speed_change': [0, 0x100, 0],
         'negotiated_link_width': [0x1D7064, 8, 6],
+        'jump_between_negotiated_link_width': [0, 0x100, 0],
         'fsm_0_speed_en': [0x1D7064, 12, 3],
         # cause
         'rx_errors_get': [0x1db01c, 0, 32],
