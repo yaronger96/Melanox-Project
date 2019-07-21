@@ -41,7 +41,17 @@ class crspace_shomron:
         'device_id': [0x0014, 0, 16],
         'active_host_space': [0X11fd88, 0 , 3],
         'cfgwr0_compliter_id': [0X1000C0, 0 , 16],  #address for port 0
-        'jump_between_compliter': [0, 0x80, 0]
+        'jump_between_compliter': [0, 0x80, 0],
+        # cause
+        'rx_errors_get':[0x11e80c,0,32],
+        'rx_errors_clear': [0x11e818,0,32],
+        'jump_between_RxError_get': [0, 0x200, 0],
+        'jump_between_RxError_clear': [0, 0x200, 0],
+
+        'pxd_cause_get': [0x1100cc, 0, 32],
+        'pxd_cause_clear': [0x1100d8, 0, 32],
+        'jump_between_pxd_cause_get': [0, 0x200, 0],
+        'jump_between_pxd_cause_clear': [0, 0x200, 0],
     }
 
 
@@ -54,6 +64,15 @@ class crspace_dotan:
         'active_host_space': [0X11fd88, 0, 3],
         'cfgwr0_compliter_id': [0X1000C0, 0, 16],# address for port 0
         'jump_between_compliter': [0, 0x80, 0],
+        # cause
+        'rx_errors_get': [0x11e80c, 0, 32],
+        'rx_errors_clear': [0x11e818, 0, 32],
+        'jump_between_RxError_get': [0, 0x200, 0],
+        'jump_between_RxError_clear': [0, 0x200, 0],
+        'pxd_cause_get': [0x1100cc, 0, 32],
+        'pxd_cause_clear': [0x1100d8, 0, 32],
+        'jump_between_pxd_cause_get': [0, 0x200, 0],
+        'jump_between_pxd_cause_clear': [0, 0x200, 0],
     }
 
 class crspace_galil:
@@ -87,7 +106,16 @@ class crspace_galil:
 
         'active_host_space': [0X126D40, 0, 16],
         'cfgwr0_compliter_id': [0X108340, 0, 16],  # address for port 0
-        'jump_between_compliter': [0, 0x10, 0]
+        'jump_between_compliter': [0, 0x10, 0],
+        # cause
+        'rx_errors_get': [0x13b01c, 0, 32],
+        'rx_errors_clear': [0x13b018, 0, 32],
+        'jump_between_RxError_get': [0, 0x400, 0],
+        'jump_between_RxError_clear': [0, 0x400, 0],
+        'pxd_cause_get': [0x12019c, 0, 32],
+        'pxd_cause_clear': [0x120198, 0, 32],
+        'jump_between_pxd_cause_get': [0, 0x200, 0],
+        'jump_between_pxd_cause_clear': [0, 0x200, 0],
     }
 
 class crspace_bluefield_pcore0:
@@ -156,6 +184,15 @@ class crspace_bluefield_pcore0:
 
         'fw_directed_speed_change_pcore_0': [0x137210, 1, 1, 1, 0x200, 8 ],
         'fw_directed_speed_change_pcore_1': [0x177010, 1, 1, 1, 0x200, 8 ],
+        # cause
+        'rx_errors_get': [0x13b01c, 0, 32],
+        'rx_errors_clear': [0x13b018, 0, 32],
+        'jump_between_RxError_get': [0, 0x400, 0],
+        'jump_between_RxError_clear': [0, 0x400, 0],
+        'pxd_cause_get': [0x12019c, 0, 32],
+        'pxd_cause_clear': [0x120198, 0, 32],
+        'jump_between_pxd_cause_get': [0, 0x200, 0],
+        'jump_between_pxd_cause_clear': [0, 0x200, 0],
 
     }
 
@@ -225,6 +262,15 @@ class crspace_bluefield_pcore1:
 
         'fw_directed_speed_change_pcore_0': [0x137210, 1, 1, 1, 0x200, 8 ],
         'fw_directed_speed_change_pcore_1': [0x177010, 1, 1, 1, 0x200, 8 ],
+        # cause
+        'rx_errors_get': [0x17b01c, 0, 32],
+        'rx_errors_clear': [0x17b018, 0, 32],
+        'jump_between_RxError_get': [0, 0x400, 0],
+        'jump_between_RxError_clear': [0, 0x400, 0],
+        'pxd_cause_get': [0x16019c, 0, 32],
+        'pxd_cause_clear': [0x160198, 0, 32],
+        'jump_between_pxd_cause_get': [0, 0x200, 0],
+        'jump_between_pxd_cause_clear': [0, 0x200, 0],
 
     }
 
@@ -234,6 +280,16 @@ class crspace_negev_pcore0:
         'speed_en': [0x157034, 12, 3],
         'negotiated_link_width': [0x11f464, 8, 6],
         'fsm_0_speed_en': [0x157064, 12, 3],
+        # cause
+        'rx_errors_get': [0x15b01c, 0, 32],
+        'rx_errors_clear': [0x15b018, 0, 32],
+        'jump_between_RxError_get':[0, 0x200, 0],
+        'jump_between_RxError_clear': [0, 0x200, 0],
+        'pxd_cause_get': [0x14019c, 0, 32],
+        'pxd_cause_clear': [0x140198, 0, 32],
+        'jump_between_pxd_cause_get': [0, 0x200, 0],
+        'jump_between_pxd_cause_clear': [0, 0x200, 0],
+
     }
 
 class crspace_negev_pcore1:
@@ -242,4 +298,13 @@ class crspace_negev_pcore1:
         'speed_en': [0x1D7034, 12, 3],
         'negotiated_link_width': [0x1D7064, 8, 6],
         'fsm_0_speed_en': [0x1D7064, 12, 3],
+        # cause
+        'rx_errors_get': [0x1db01c, 0, 32],
+        'rx_errors_clear': [0x1db018, 0, 32],
+        'jump_between_RxError_get':[0, 0x200, 0],
+        'jump_between_RxError_clear': [0, 0x200, 0],
+        'pxd_cause_get': [0x1c019c, 0, 32],
+        'pxd_cause_clear': [0x1c0198, 0, 32],
+        'jump_between_pxd_cause_get': [0, 0x200, 0],
+        'jump_between_pxd_cause_clear': [0, 0x200, 0],
     }
