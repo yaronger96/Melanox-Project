@@ -3,7 +3,6 @@ import sys
 
 sys.path.insert(0, '/auto/sw_work/fwshared/c_yarong/pci_verification/student_project/Feature')
 sys.path.insert(0, '/auto/sw_work/fwshared/c_yarong/pci_verification/student_project/property')
-sys.path.insert(0,'/auto/sw_work/fwshared/c_yarong/pci_verification/student_project/property/VendorIDProperty.py' )
 import PciComponent
 import HeaderTypeProperty
 import VendorIDProperty
@@ -15,20 +14,27 @@ import time
 import subprocess
 import paramiko
 import bdf_feature
+import PrimaryBusProperty
 
 #######################data ####################
 device_cr_space = {  ##key =device ID , value= CR_space_name
-    hex(0x4119): "/dev/mst/mt4119_pciconf0 ",
-    hex(0x4117): "/dev/mst/mt4117_pciconf0",
-    hex(0x1007): "/dev/mst/mt4103_pciconf0"
+    hex(4119): "/dev/mst/mt4119_pciconf0 ",
+    hex(4117): "/dev/mst/mt4117_pciconf0",
+    hex(1007): "/dev/mst/mt4103_pciconf0",
+    hex(4117): "/dev/mst/mt4117_pciconf0",
+    hex(41682): "/dev/mst/mt41682_pciconf0",
+    hex(6517): "/dev/mst/mt41682_pciconf0"
+
 }
 
 device_name = {  ##key =device ID , value= CR_space_name
-    "mt4119_pciconf0": "BW",
-    "mt4117_pciconf0": "Connect_x_5",
-    "mt4103_pciconf0": "Connect_x_3_pro",
+    "/dev/mst/mt4119_pciconf0": "galil",
+    "/dev/mst/mt4117_pciconf0": "dotan",
+    "/dev/mst/mt4103_pciconf0": "Connect_x_3_pro",
     '/dev/mst/mt4115_pciconf0': 'shomron',
-    '/dev/mst/mt4117_pciconf0': 'dotan',
+    '/dev/mst/mt41682_pciconf0': 'BW',
+    "/dev/mst/mt4121_pciconf0": "galil",
+    '/dev/mst/mt4113_pciconf0': 'negev',
 
 }
 
@@ -54,7 +60,7 @@ class Monostate:
             self.CliAgent = None
             self.dutPortNumber = None
 
-    def __init__(self, dut="", serverName="Local",portNumber=None):
+    def __init__(self, dut="", serverName="Local", portNumber=None):
         if Monostate._inner is None:
             Monostate._inner = Monostate.inner()
             self._inner.dut = dut
@@ -96,7 +102,8 @@ class Monostate:
 
     def init_MtUsb_input(self):
         self._inner.mlxDut = True
-        self._inner.dutComponent.resources.set_CRspace_agent(crspace_agent(self._inner.dut))  #######what is the input for CR space agent
+        self._inner.dutComponent.resources.set_CRspace_agent(
+            crspace_agent(self._inner.dut))  #######what is the input for CR space agent
         if self._inner.dutPortNumber is None:
             print "the DUT is MtUsb , you must provide port number in the input"
             exit(1)
@@ -107,18 +114,18 @@ class Monostate:
     def init_BDF_Device_input(self):
         self._inner.dutComponent.resources.set_Confspace_agent(conf_space_agent(self._inner.dut))
         self.find_cr_space("dut")
-        self.findPortNumber(self._inner.dutPortNumber,self._inner.dutComponent)
+        self.findPortNumber(self._inner.dutPortNumber, self._inner.dutComponent)
         # now we have all the information about the dut
         self.find_topology()
 
     def init_CRspace_Device_input(self):
         self._inner.mlxDut = True
         self._inner.dutComponent.resources.set_CRspace_agent(crspace_agent(self._inner.dut))
-        data = self._inner.dut.split("/")
-        self.find_BDF_according_the_device(data[3])
+        self.find_BDF_according_the_device(self._inner.dut)
         ##the device_number
         # now we have all the information about the dut
-        self.findPortNumber(self._inner.dutPortNumber, self._inner.dutComponent)
+        isDutDevice=True
+        self.findPortNumber(self._inner.dutPortNumber, self._inner.dutComponent,isDutDevice)
         self.find_topology()
 
     def find_cr_space(self, name_of_component):
@@ -139,22 +146,25 @@ class Monostate:
                 device_id = self._inner.upstreamComponent.resources.conf_space_agent.read_header(0x02, 0, 16)
             else:
                 device_id = self._inner.downstreamComponent.resources.conf_space_agent.read_header(0x02, 0, 16)
-
+            print device_id
             for device in device_cr_space.keys():
                 if device == str(device_id):
                     flag = False
                     cr_space_str = device_cr_space[device]
                     if name_of_component == "dut":
                         self._inner.dutComponent.resources.set_CRspace_agent(crspace_agent(cr_space_str))
-                        self._inner.dutComponent.setIsSwitch(self.checkIfSwitch(device_id, self._inner.dutComponent.resources.CR_space_agent))
+                        self._inner.dutComponent.setIsSwitch(
+                            self.checkIfSwitch(device_id, self._inner.dutComponent.resources.CR_space_agent))
                         if self.check_if_dutHasSecureFw():
                             self._inner.dutComponent.resources.CR_space_agent.set_read_only_flag()
                     elif name_of_component == "upstreamComponent":
                         self._inner.upstreamComponent.resources.set_CRspace_agent(crspace_agent(cr_space_str))
-                        self._inner.dutComponent.setIsSwitch(self.checkIfSwitch(device_id, self._inner.upstreamComponent.resources.CR_space_agent))
+                        self._inner.dutComponent.setIsSwitch(
+                            self.checkIfSwitch(device_id, self._inner.upstreamComponent.resources.CR_space_agent))
                     else:  ##name_of_component=="downstreamcomponent
                         self._inner.downstreamComponent.resources.set_CRspace_agent(crspace_agent(cr_space_str))
-                        self._inner.dutComponent.setIsSwitch(self.checkIfSwitch(device_id, self._inner.downstreamComponent.resources.CR_space_agent))
+                        self._inner.dutComponent.setIsSwitch(
+                            self.checkIfSwitch(device_id, self._inner.downstreamComponent.resources.CR_space_agent))
 
             if flag:
                 print("not found this device")
@@ -167,59 +177,66 @@ class Monostate:
                 self._inner.downstreamComponent.resources.set_CRspace_agent(crspace_agent(None))
 
     def checkIfSwitch(self, deviceId, resurceCrSpace):
-        if str(deviceId) == hex(41682) or str(deviceId) == hex(6517) : #BF device
+        if str(deviceId) == hex(41682) or str(deviceId) == hex(6517):  # BF device
             return True
-        if str(deviceId) == hex(4119) or str(deviceId) == hex(4121) : #galil device
+        if str(deviceId) == hex(4119) or str(deviceId) == hex(4121):  # galil device
             return resurceCrSpace.mst_read(resurceCrSpace.get_CRspace(), 0Xf8b0, 0, 1)
-        else: #the device cant be a switch
+        else:  # the device cant be a switch
             return False
 
-    def findPortNumber(self, portNumber, pciComponent):
+    def findPortNumber(self, portNumber, pciComponent, isDutDevice):
         componentCrSpace = pciComponent.resources.CR_space_agent.get_CRspace()
         if componentCrSpace is None:
             pciComponent.resources.CR_space_agent.setPortNumber('None')
-        if pciComponent.getIsSwitch():
+            return
+        if pciComponent.getIsSwitch() and isDutDevice:
             if portNumber is None:
                 print "the device is switch , you must provide port number in the input"
                 exit(1)
             if self._inner.dutPortNumber < 0:
                 print "port number can not be less then 0 please try again"
+                exit(1)
             pciComponent.resources.CR_space_agent.setPortNumber(self._inner.dutPortNumber)
         else:
-            activeHost =ActiveHostProperty.ActiveHostProperty(pciComponent.resources).get_with_CRspace()
+            busOfTheComponent = bdf_feature.bdf_feature(bdf=pciComponent.resources.conf_space_agent.get_bdf()).bus
+            pcoreAdd=0
+            if device_name[componentCrSpace] == 'negev' or device_name[componentCrSpace] == 'BW':
+                PrimaryBusPro = PrimaryBusProperty. PrimaryBusProperty(pciComponent.resources)
+                #deviceOfTheComponent = bdf_feature.bdf_feature(bdf=pciComponent.resources.conf_space_agent.get_bdf()).device
+                pciComponent.resources.CR_space_agent.setPortNumber(20)
+                pcoreAdd=20
+                if busOfTheComponent != PrimaryBusPro.get_with_CRspace():
+                    pciComponent.resources.CR_space_agent.setPortNumber(30)
+                    pcoreAdd=30
+            activeHost = ActiveHostProperty.ActiveHostProperty(pciComponent.resources).get_with_CRspace()
             compliterId = CompliterIdProperty.CompliterIdProperty(pciComponent.resources)
-            busOfTheComponent = bdf_feature.bdf_feature(bdf=pciComponent.resources.conf_space_agent.getBdf())
-            if device_name[componentCrSpace] == 'shomron' or  device_name[componentCrSpace]=='dotan' :
+            if device_name[componentCrSpace] == 'shomron' or device_name[componentCrSpace] == 'dotan':
                 for port in range(activeHost):
                     compliterId.set_port_number(port)
-                    if busOfTheComponent == compliterId.get_with_CRspace():
+                    if busOfTheComponent == (compliterId.get_with_CRspace() >> 8):
                         pciComponent.resources.CR_space_agent.setPortNumber(port)
                 if pciComponent.resources.CR_space_agent.getPortNumber() is None:
                     print "cant find port number , probabely BDF wrong "
                     exit(1)
+            #         #########################################################
+
             else:
-                mask=0b0000000000000001
-                for port in range(16):
-                    if activeHost & mask != 0 :
-                        compliterId.set_port_number(port)
-                        if busOfTheComponent == compliterId.get_with_CRspace():
-                            pciComponent.resources.CR_space_agent.setPortNumber(port)
+                mask = 0b0000000000000001
+                rangeOfFor = 8
+                if pcoreAdd == 0:
+                    rangeOfFor = 16
+                for port in range(rangeOfFor):
+                    if activeHost & mask != 0:
+                        compliterId.set_port_number(port+pcoreAdd)
+                        if busOfTheComponent == (compliterId.get_with_CRspace() >> 8):
+                            pciComponent.resources.CR_space_agent.setPortNumber(port+pcoreAdd)
                             break
-                    mask = mask<<1
+                    mask = mask << 1
+
                 if pciComponent.resources.CR_space_agent.getPortNumber() is None:
                     print "cant find port number , probabely BDF wrong "
                     exit(1)
-
-
-
-
-            'active_host_space': [0X126D40, 0, 16],
-            'cfgwr0_compliter_id'
-            device, address, offset, size = self.getDataFromCrspaceDb('?????????????????????????')
-            if device is 'error' & address is 'error' & offset is 'error' & size is 'error':
-                print "error with get the data from CR_space"
-            return self.Property_resurces.get_CRspace_agent().mst_write(device, address, hex(value), offset, size)
-
+        print "port :::::::" + str(pciComponent.resources.CR_space_agent.getPortNumber())
 
     def check_if_dutHasSecureFw(self):
         cr_space = self._inner.dutComponent.resources.CR_space_agent.get_CRspace()
@@ -245,7 +262,7 @@ class Monostate:
         if name_of_device == "BW":
             self._inner.dutComponent.setIsSwitch(True)
             self._inner.dutComponent.resources.set_Confspace_agent(conf_space_agent(self.find_BW_BDF()))
-        elif name_of_device == "Connect_x_5":
+        elif name_of_device == "galil":
             self._inner.dutComponent.setIsSwitch(True)
             self._inner.dutComponent.resources.set_Confspace_agent(conf_space_agent(self.find_Connect_x_5_BDF()))
         else:
@@ -292,12 +309,13 @@ class Monostate:
         heder_type_property = HeaderTypeProperty.HeaderTypeProperty(self._inner.dutComponent.resources)
         heder_type = heder_type_property.get_with_Confspace()  # get the header type
         print heder_type
+        isDutDevice = False
         if heder_type == hex(0X1):  ##header_type==1 ->dut is upstream
             self._inner.dutIsUpstream = True
             self._inner.upstreamComponent = self._inner.dutComponent
             self.find_dsc_component_BDF_conf_space()  # find the other side of the link
             self.find_cr_space("downstreamComponent")
-            self.findPortNumber(self._inner.dutPortNumber, self._inner.downstreamComponent)
+          #  self.findPortNumber(self._inner.dutPortNumber, self._inner.downstreamComponent, isDutDevice)
         else:
             self._inner.dutIsUpstream = False
             self._inner.downstreamComponent = self._inner.dutComponent
@@ -305,6 +323,9 @@ class Monostate:
             print self._inner.downstreamComponent.resources.get_Confspace_agent().get_bdf()
             self.find_usc_component_BDF_conf_space()  ###find the other side of the link
             self.find_cr_space("upstreamComponent")
+         #   self.findPortNumber(self._inner.dutPortNumber, self._inner.upstreamComponent,isDutDevice)
+            print self._inner.upstreamComponent.resources.get_CRspace_agent().get_CRspace()
+            print self._inner.upstreamComponent.resources.get_Confspace_agent().get_bdf()
 
     def find_dsc_component_BDF_conf_space(self):
         secondary_bus_number = self._inner.upstreamComponent.resources.conf_space_agent.read_header(0x19, 0, 8)
@@ -325,21 +346,22 @@ class Monostate:
         print "cant find dsc, exiting.."
         exit(1)
 
-        def find_usc_component_BDF_conf_space(self):
-            downstream_BDF = self._inner.dwonstreamComponent.resources.conf_space_agent.get_bdf()
-            bdf_f = bdf_feature.bdf_feature(bdf=downstream_BDF)
-            bus = bdf_f.bus
-            if bus >=0 and bus <=9 :
-                bus = "0"+str(bus)
-            bdf_list = self.read_current_bdfs_in_system()
-            for bdf in bdf_list:
-                cmd = "lspci -s {} -vvv | grep -i secondary={} ".format(bdf, bus)
-                rc, output = self._inner.CliAgent.execute_job_and_return_returncode_and_output(cmd)
-                if not rc:
-                    self._inner.upstreamComponent.resources.set_Confspace_agent(conf_space_agent(bdf))
-                    return
-            print "cant find usc, exiting.."
-            exit(1)
+    def find_usc_component_BDF_conf_space(self):
+        downstream_BDF = self._inner.downstreamComponent.resources.conf_space_agent.get_bdf()
+        bdf_f = bdf_feature.bdf_feature(bdf=downstream_BDF)
+        bus = bdf_f.bus
+        if bus >= 0 and bus <= 9:
+            bus = "0" + str(bus)
+        bdf_list = self.read_current_bdfs_in_system()
+        for bdf in bdf_list:
+            cmd = "lspci -s {} -vvv | grep -i secondary={} ".format(bdf, bus)
+            rc, output = self._inner.CliAgent.execute_job_and_return_returncode_and_output(cmd)
+            if not rc:
+                self._inner.upstreamComponent.resources.set_Confspace_agent(conf_space_agent(bdf))
+                print "usc bdf: " + bdf
+                return
+        print "cant find usc, exiting.."
+        exit(1)
 
     def read_current_bdfs_in_system(self):
         bdf_list = list()
@@ -364,12 +386,20 @@ class crspace_agent:
 
     def __init__(self, CRspace):
         self.Crspace = CRspace  # str
+        self.portNumber = None
+        self.read_only = False
 
     def get_CRspace(self):
         return self.Crspace
 
     def set_read_only_flag(self):
         self.read_only = True
+
+    def setPortNumber(self, portNum):
+        self.portNumber = portNum
+
+    def getPortNumber(self):
+        return self.portNumber
 
     def mst_read(self, device, address, offset=0, size=32):
         """ perform mst_read for given device, address, offset and size
@@ -380,9 +410,9 @@ class crspace_agent:
         :return : value for mcra /dev/mst/mtxxxxxxxx 0x<address>.offset:size
         rtype str in hex
         """
-        inf_singletone = Monostate()
+        server = Monostate()
         cmd = "mcra " + device + " " + str(hex(address)) + "." + str(offset) + ":" + str(size)
-        (status, output) = inf_singletone.exec_agent.execute_job_and_return_returncode_and_output(cmd)
+        (status, output) = server._inner.CliAgent.execute_job_and_return_returncode_and_output(cmd)
         if status:
             return None
         output = eval(output)
@@ -400,12 +430,12 @@ class crspace_agent:
         :return : value for mcra /dev/mst/mtxxxxxxxx 0x<address>.offset:size
         rtype str in hex
         """
-        inf_singletone = Monostate()
+        server = Monostate()
         # word = self.mst_read(device, address)
         # mask = operator.lshift((operator.lshift(1, size) - 1), offset)
         # word = (word & ~mask | ((operator.lshift(value, offset) & mask)))
         cmd = "mcra " + device + " " + str(hex(address)) + "." + str(offset) + ":" + str(size) + " " + str(hex(value))
-        (status, output) = inf_singletone.exec_agent.execute_job_and_return_returncode_and_output(cmd)
+        (status, output) = server._inner.CliAgent.execute_job_and_return_returncode_and_output(cmd)
         print("mcra write: {} - return status is: {} ".format(cmd, status))
         if status != 0:
             return -1

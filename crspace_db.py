@@ -206,6 +206,9 @@ class crspace_bluefield_pcore0:
 
         'fw_directed_speed_change_pcore_0': [0x137210, 1, 1, 1, 0x200, 8 ],
         'fw_directed_speed_change_pcore_1': [0x177010, 1, 1, 1, 0x200, 8 ],
+
+
+
         # cause
         'rx_errors_get': [0x13b01c, 0, 32],
         'rx_errors_clear': [0x13b018, 0, 32],
@@ -215,6 +218,10 @@ class crspace_bluefield_pcore0:
         'pxd_cause_clear': [0x120198, 0, 32],
         'jump_between_pxd_cause_get': [0, 0x200, 0],
         'jump_between_pxd_cause_clear': [0, 0x200, 0],
+        'primary_bus': [0X11041c, 8, 8],
+        'active_host_space': [0X13ff40, 0, 16],
+        'cfgwr0_compliter_id': [0X108340, 0, 16],  #address for port 0
+        'jump_between_compliter': [0, 0x08, 0],
 
     }
 
@@ -289,6 +296,7 @@ class crspace_bluefield_pcore1:
 
         'fw_directed_speed_change_pcore_0': [0x137210, 1, 1, 1, 0x200, 8 ],
         'fw_directed_speed_change_pcore_1': [0x177010, 1, 1, 1, 0x200, 8 ],
+
         # cause
         'rx_errors_get': [0x17b01c, 0, 32],
         'rx_errors_clear': [0x17b018, 0, 32],
@@ -298,6 +306,11 @@ class crspace_bluefield_pcore1:
         'pxd_cause_clear': [0x160198, 0, 32],
         'jump_between_pxd_cause_get': [0, 0x200, 0],
         'jump_between_pxd_cause_clear': [0, 0x200, 0],
+
+        'primary_bus': [0X15061c, 8, 8],
+        'active_host_space': [0X15ff40, 0, 16],
+        'cfgwr0_compliter_id': [0X148340, 0, 16],  # address for port 0
+        'jump_between_compliter': [0, 0x08, 0],
 
     }
 
@@ -322,6 +335,13 @@ class crspace_negev_pcore0:
         'jump_between_pxd_cause_get': [0, 0x200, 0],
         'jump_between_pxd_cause_clear': [0, 0x200, 0],
 
+
+
+        'primary_bus': [0X11041c, 8, 8],
+        'active_host_space': [0X17ff40, 0, 16],
+        'cfgwr0_compliter_id': [0X108340, 0, 16],  # address for port 0
+        'jump_between_compliter': [0, 0x08, 0],
+
     }
 
 class crspace_negev_pcore1:
@@ -344,4 +364,11 @@ class crspace_negev_pcore1:
         'pxd_cause_clear': [0x1c0198, 0, 32],
         'jump_between_pxd_cause_get': [0, 0x200, 0],
         'jump_between_pxd_cause_clear': [0, 0x200, 0],
+
+
+
+        'primary_bus': [0X19061c, 8, 8],
+        'active_host_space': [0X1dff40, 0, 16],
+        'cfgwr0_compliter_id': [0X188340, 0, 16],  # address for port 0
+        'jump_between_compliter': [0, 0x08, 0],
     }
