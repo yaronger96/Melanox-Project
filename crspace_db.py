@@ -26,16 +26,16 @@ class crspace_and_nic: #key=CrSpcae , value=nic
 
 #order for fields: address, offset, size, default_value, spaces_for_next_element, number_of_available_next_elements
 #in every class must provide the jump between port in each reg
+#order for filed apdate: address,offset,size,jump
 class crspace_shomron:
     REGISTERS = {
-        'current_link_speed': [0x11f464, 0, 3],
-        'jump_between_current_link_speed': [0, 0x100, 0],
-        'speed_en': [0x11f434, 12, 3],
-        'jump_between_speed_en': [0, 0x100, 0],
-        'fw_directed_speed_change': [0x11f410, 1, 1],
-        'jump_between_fw_directed_speed_change': [0, 0x100, 0],
-        'negotiated_link_width': [0x11f464, 8, 6],
-        'jump_between_negotiated_link_width': [0, 0x100, 0],
+        'current_link_speed': [0x11f464, 0, 3, 0x100],
+        'speed_en': [0x11f434, 12, 3, 0x100],
+        'fw_directed_speed_change': [0x11f410, 1, 1, 0x100],
+        'negotiated_link_width': [0x11f464, 8, 6, 0x100],
+        'active_host_space': [0X11fd88, 0, 3, 0],
+        'cfgwr0_compliter_id': [0X1000C0, 0, 16, 0x80],  # address for port 0
+
         'fsm_0_speed_en': [0x11f434, 12, 3],
         'port_state': [0xf3810, 0, 8],
         'cx3_directed_width': [0xf39b0, 0, 4],
@@ -44,59 +44,44 @@ class crspace_shomron:
         'spare_top4x_0': [0xf22b0, 24, 8],
         'spare_top4x_1': [0xf24b0, 24, 8],
         'device_id': [0x0014, 0, 16],
-        'active_host_space': [0X11fd88, 0 , 3],
-        'cfgwr0_compliter_id': [0X1000C0, 0 , 16],  #address for port 0
-        'jump_between_compliter': [0, 0x80, 0],
-        # cause
-        'rx_errors_get':[0x11e80c,0,32],
-        'rx_errors_clear': [0x11e818,0,32],
-        'jump_between_RxError_get': [0, 0x200, 0],
-        'jump_between_RxError_clear': [0, 0x200, 0],
 
-        'pxd_cause_get': [0x1100cc, 0, 32],
-        'pxd_cause_clear': [0x1100d8, 0, 32],
-        'jump_between_pxd_cause_get': [0, 0x200, 0],
-        'jump_between_pxd_cause_clear': [0, 0x200, 0],
+
+        # cause
+        'rx_errors_get':[0x11e80c, 0, 32, 0x200],
+        'rx_errors_clear': [0x11e818, 0, 32, 0x200],
+
+        'pxd_cause_get': [0x1100cc, 0, 32, 0x200],
+        'pxd_cause_clear': [0x1100d8, 0, 32,  0x200],
+
     }
 
 
 class crspace_dotan:
     REGISTERS = {
-        'current_link_speed': [0x11f464, 0, 3],
-        'jump_between_current_link_speed': [0, 0x100, 0],
-        'speed_en': [0x11f434, 12, 3],
-        'jump_between_speed_en': [0, 0x100, 0],
-        'fw_directed_speed_change': [0x11f410, 1, 1],
-        'jump_between_fw_directed_speed_change': [0, 0x100, 0],
-
-        'negotiated_link_width': [0x11f464, 8, 6],
-        'jump_between_negotiated_link_width': [0, 0x100, 0],
+        'current_link_speed': [0x11f464, 0, 3, 0x100],
+        'speed_en': [0x11f434, 12, 3 , 0x100],
+        'fw_directed_speed_change': [0x11f410, 1, 1, 0x100],
+        'negotiated_link_width': [0x11f464, 8, 6, 0x100],
         'fsm_0_speed_en': [0x11f434, 12, 3],
-        'active_host_space': [0X11fd88, 0, 3],
-        'cfgwr0_compliter_id': [0X1000C0, 0, 16],# address for port 0
-        'jump_between_compliter': [0, 0x80, 0],
+        'active_host_space': [0X11fd88, 0, 3,0],
+        'cfgwr0_compliter_id': [0X1000C0, 0, 16, 0x80],# address for port 0
+
         # cause
-        'rx_errors_get': [0x11e80c, 0, 32],
-        'rx_errors_clear': [0x11e818, 0, 32],
-        'jump_between_RxError_get': [0, 0x200, 0],
-        'jump_between_RxError_clear': [0, 0x200, 0],
-        'pxd_cause_get': [0x1100cc, 0, 32],
-        'pxd_cause_clear': [0x1100d8, 0, 32],
-        'jump_between_pxd_cause_get': [0, 0x200, 0],
-        'jump_between_pxd_cause_clear': [0, 0x200, 0],
+        'rx_errors_get': [0x11e80c, 0, 32, 0x200],
+        'rx_errors_clear': [0x11e818, 0, 32, 0x200],
+        'pxd_cause_get': [0x1100cc, 0, 32, 0x200],
+        'pxd_cause_clear': [0x1100d8, 0, 32, 0x200],
+
     }
 
 class crspace_galil:
     REGISTERS = {
-        'current_link_speed': [0x137064, 0, 3],
-        'jump_between_current_link_speed': [0, 0x100, 0],
-        'speed_en': [0x137034, 12, 4],
-        'jump_between_speed_en': [0, 0x100, 0],
-        'fw_directed_speed_change': [0x137010, 1, 1],
-        'jump_between_fw_directed_speed_change': [0, 0x100, 0],
+        'current_link_speed': [0x137064, 0, 3, 0x100],
+        'speed_en': [0x137034, 12, 4, 0x100],
+        'fw_directed_speed_change': [0x137010, 1, 1, 0x100],
+        'pcie_switch_en': [0xf8b0, 0, 0, 0],
 
-        'negotiated_link_width': [0x137064, 8, 6],
-        'jump_between_negotiated_link_width': [0, 0x100, 0],
+        'negotiated_link_width': [0x137064, 8, 6, 0x100],
         'perf_selector2': [0x10fa84, 16, 16],
         'perf_counter2': [0x10fac8, 0, 32],
 
@@ -121,30 +106,22 @@ class crspace_galil:
         'fsm[8]_fw_directed_speed_change': [0x137810, 1, 1,1],
         'fsm[0]_current_link_speed': [0x137064, 0, 3],
 
-        'active_host_space': [0X126D40, 0, 16],
-        'cfgwr0_compliter_id': [0X108340, 0, 16],  # address for port 0
-        'jump_between_compliter': [0, 0x10, 0],
+        'active_host_space': [0X126D40, 0, 16, 0],
+        'cfgwr0_compliter_id': [0X108340, 0, 16, 0x10],  # address for port 0
+
         # cause
-        'rx_errors_get': [0x13b01c, 0, 32],
-        'rx_errors_clear': [0x13b018, 0, 32],
-        'jump_between_RxError_get': [0, 0x400, 0],
-        'jump_between_RxError_clear': [0, 0x400, 0],
-        'pxd_cause_get': [0x12019c, 0, 32],
-        'pxd_cause_clear': [0x120198, 0, 32],
-        'jump_between_pxd_cause_get': [0, 0x200, 0],
-        'jump_between_pxd_cause_clear': [0, 0x200, 0],
+        'rx_errors_get': [0x13b01c, 0, 32, 0x400],
+        'rx_errors_clear': [0x13b018, 0, 32, 0x400],
+        'pxd_cause_get': [0x12019c, 0, 32,  0x200],
+        'pxd_cause_clear': [0x120198, 0, 32, 0x200],
     }
 
 class crspace_bluefield_pcore0:
     REGISTERS = {
-        'current_link_speed': [0x137064, 0, 3],
-        'jump_between_current_link_speed': [0, 0x100, 0],
-        'speed_en': [0x137034, 12, 4],
-        'jump_between_speed_en': [0, 0x100, 0],
-        'fw_directed_speed_change': [0x137010, 1, 1],
-        'jump_between_fw_directed_speed_change': [0, 0x100, 0],
-        'negotiated_link_width': [0x137064, 8, 6],
-        'jump_between_negotiated_link_width': [0, 0x100, 0],
+        'current_link_speed': [0x137064, 0, 3, 0x100],
+        'speed_en': [0x137034, 12, 4, 0x100],
+        'fw_directed_speed_change': [0x137010, 1, 1, 0x100],
+        'negotiated_link_width': [0x137064, 8, 6, 0x100],
 
 #registers for enable VDM
         'vdm_gw[8].desc0.data_1151_1120': [0x185b70, 0, 32, 0x72000010],
@@ -210,31 +187,23 @@ class crspace_bluefield_pcore0:
 
 
         # cause
-        'rx_errors_get': [0x13b01c, 0, 32],
-        'rx_errors_clear': [0x13b018, 0, 32],
-        'jump_between_RxError_get': [0, 0x400, 0],
-        'jump_between_RxError_clear': [0, 0x400, 0],
-        'pxd_cause_get': [0x12019c, 0, 32],
-        'pxd_cause_clear': [0x120198, 0, 32],
-        'jump_between_pxd_cause_get': [0, 0x200, 0],
-        'jump_between_pxd_cause_clear': [0, 0x200, 0],
-        'primary_bus': [0X11041c, 8, 8],
-        'active_host_space': [0X13ff40, 0, 16],
-        'cfgwr0_compliter_id': [0X108340, 0, 16],  #address for port 0
-        'jump_between_compliter': [0, 0x08, 0],
+        'rx_errors_get': [0x13b01c, 0, 32, 0x400],
+        'rx_errors_clear': [0x13b018, 0, 32, 0x400],
+        'pxd_cause_get': [0x12019c, 0, 32, 0x200],
+        'pxd_cause_clear': [0x120198, 0, 32, 0x200],
+        'primary_bus': [0X11041c, 8, 8, 0],
+        'active_host_space': [0X13ff40, 0, 16, 0],
+        'cfgwr0_compliter_id': [0X108340, 0, 16, 0x08],  #address for port 0
+
 
     }
 
 class crspace_bluefield_pcore1:
     REGISTERS = {
-        'current_link_speed': [0x177064, 0, 3],
-        'jump_between_current_link_speed': [0, 0x100, 0],
-        'speed_en': [0x177034, 12, 4],
-        'jump_between_speed_en': [0, 0x100, 0],
-        'fw_directed_speed_change': [0x177010, 1, 1],
-        'jump_between_fw_directed_speed_change': [0, 0x100, 0],
-        'negotiated_link_width': [0x177064, 8, 6],
-        'jump_between_negotiated_link_width': [0, 0x100, 0],
+        'current_link_speed': [0x177064, 0, 3, 0x100],
+        'speed_en': [0x177034, 12, 4, 0x100],
+        'fw_directed_speed_change': [0x177010, 1, 1, 0x100],
+        'negotiated_link_width': [0x177064, 8, 6, 0x100],
 
 #registers for enable VDM
         'vdm_gw[8].desc0.data_1151_1120': [0x185b70, 0, 32, 0x72000010],
@@ -298,77 +267,48 @@ class crspace_bluefield_pcore1:
         'fw_directed_speed_change_pcore_1': [0x177010, 1, 1, 1, 0x200, 8 ],
 
         # cause
-        'rx_errors_get': [0x17b01c, 0, 32],
-        'rx_errors_clear': [0x17b018, 0, 32],
-        'jump_between_RxError_get': [0, 0x400, 0],
-        'jump_between_RxError_clear': [0, 0x400, 0],
-        'pxd_cause_get': [0x16019c, 0, 32],
-        'pxd_cause_clear': [0x160198, 0, 32],
-        'jump_between_pxd_cause_get': [0, 0x200, 0],
-        'jump_between_pxd_cause_clear': [0, 0x200, 0],
+        'rx_errors_get': [0x17b01c, 0, 32, 0x400],
+        'rx_errors_clear': [0x17b018, 0, 32, 0x400],
+        'pxd_cause_get': [0x16019c, 0, 32, 0x200],
+        'pxd_cause_clear': [0x160198, 0, 32, 0x200],
+        'primary_bus': [0X15061c, 8, 8, 0],
+        'active_host_space': [0X15ff40, 0, 16, 0],
+        'cfgwr0_compliter_id': [0X148340, 0, 16, 0x08],  # address for port 0
 
-        'primary_bus': [0X15061c, 8, 8],
-        'active_host_space': [0X15ff40, 0, 16],
-        'cfgwr0_compliter_id': [0X148340, 0, 16],  # address for port 0
-        'jump_between_compliter': [0, 0x08, 0],
 
     }
 
 class crspace_negev_pcore0:
     REGISTERS = {
-        'current_link_speed': [0x157064, 0, 3],
-        'jump_between_current_link_speed': [0, 0x100, 0],
-        'speed_en': [0x157034, 12, 4],
-        'jump_between_speed_en': [0, 0x100, 0],
-        'fw_directed_speed_change': [0x157010, 1, 1],
-        'jump_between_fw_directed_speed_change': [0, 0x100, 0],
-        'negotiated_link_width': [0x157064, 8, 6],
-        'jump_between_negotiated_link_width': [0, 0x100, 0],
+        'current_link_speed': [0x157064, 0, 3, 0x100],
+        'speed_en': [0x157034, 12, 4, 0x100],
+        'fw_directed_speed_change': [0x157010, 1, 1, 0x100],
+        'negotiated_link_width': [0x157064, 8, 6, 0x100],
         'fsm_0_speed_en': [0x157064, 12, 3],
         # cause
-        'rx_errors_get': [0x15b01c, 0, 32],
-        'rx_errors_clear': [0x15b018, 0, 32],
-        'jump_between_RxError_get':[0, 0x200, 0],
-        'jump_between_RxError_clear': [0, 0x200, 0],
-        'pxd_cause_get': [0x14019c, 0, 32],
-        'pxd_cause_clear': [0x140198, 0, 32],
-        'jump_between_pxd_cause_get': [0, 0x200, 0],
-        'jump_between_pxd_cause_clear': [0, 0x200, 0],
-
-
-
+        'rx_errors_get': [0x15b01c, 0, 32, 0x200],
+        'rx_errors_clear': [0x15b018, 0, 32, 0x200],
+        'pxd_cause_get': [0x14019c, 0, 32, 0x200],
+        'pxd_cause_clear': [0x140198, 0, 32, 0x200],
         'primary_bus': [0X11041c, 8, 8],
-        'active_host_space': [0X17ff40, 0, 16],
-        'cfgwr0_compliter_id': [0X108340, 0, 16],  # address for port 0
-        'jump_between_compliter': [0, 0x08, 0],
+        'active_host_space': [0X17ff40, 0, 16 , 0],
+        'cfgwr0_compliter_id': [0X108340, 0, 16, 0x08],  # address for port 0
 
     }
 
 class crspace_negev_pcore1:
     REGISTERS = {
-        'current_link_speed': [0x1d7064, 0, 3],
-        'jump_between_current_link_speed': [0, 0x100, 0],
-        'speed_en': [0x1d7034, 12, 4],
-        'jump_between_speed_en': [0, 0x100, 0],
-        'fw_directed_speed_change': [0x1d7010, 1, 1],
-        'jump_between_fw_directed_speed_change': [0, 0x100, 0],
-        'negotiated_link_width': [0x1D7064, 8, 6],
-        'jump_between_negotiated_link_width': [0, 0x100, 0],
+        'current_link_speed': [0x1d7064, 0, 3, 0x100],
+        'speed_en': [0x1d7034, 12, 4, 0x100],
+        'fw_directed_speed_change': [0x1d7010, 1, 1, 0x100],
+        'negotiated_link_width': [0x1D7064, 8, 6, 0x100],
         'fsm_0_speed_en': [0x1D7064, 12, 3],
         # cause
-        'rx_errors_get': [0x1db01c, 0, 32],
-        'rx_errors_clear': [0x1db018, 0, 32],
-        'jump_between_RxError_get':[0, 0x200, 0],
-        'jump_between_RxError_clear': [0, 0x200, 0],
-        'pxd_cause_get': [0x1c019c, 0, 32],
-        'pxd_cause_clear': [0x1c0198, 0, 32],
-        'jump_between_pxd_cause_get': [0, 0x200, 0],
-        'jump_between_pxd_cause_clear': [0, 0x200, 0],
-
-
-
-        'primary_bus': [0X19061c, 8, 8],
-        'active_host_space': [0X1dff40, 0, 16],
-        'cfgwr0_compliter_id': [0X188340, 0, 16],  # address for port 0
-        'jump_between_compliter': [0, 0x08, 0],
+        'rx_errors_get': [0x1db01c, 0, 32, 0x200],
+        'rx_errors_clear': [0x1db018, 0, 32, 0x200],
+        'pxd_cause_get': [0x1c019c, 0, 32, 0x200],
+        'pxd_cause_clear': [0x1c0198, 0, 32, 0x200],
+        'primary_bus': [0X19061c, 8, 8, 0],
+        'active_host_space': [0X1dff40, 0, 16, 0],
+        'cfgwr0_compliter_id': [0X188340, 0, 16, 0x08],  # address for port 0
     }
