@@ -197,6 +197,7 @@ class Monostate:
                 print "port number can not be less then 0 please try again"
                 exit(1)
             pciComponent.resources.CR_space_agent.setPortNumber(self._inner.dutPortNumber)
+            return
         else:
             busOfTheComponent = bdf_feature.bdf_feature(bdf=pciComponent.resources.conf_space_agent.get_bdf()).bus
             pcoreAdd=0
@@ -211,13 +212,17 @@ class Monostate:
             activeHost = ActiveHostProperty.ActiveHostProperty(pciComponent.resources).get_with_CRspace()
             compliterId = CompliterIdProperty.CompliterIdProperty(pciComponent.resources)
             if device_name[componentCrSpace] == 'shomron' or device_name[componentCrSpace] == 'dotan':
+                found = False
                 for port in range(activeHost):
-                    compliterId.set_port_number(port)
+                    pciComponent.resources.CR_space_agent.setPortNumber(port)
                     if busOfTheComponent == (compliterId.get_with_CRspace() >> 8):
                         pciComponent.resources.CR_space_agent.setPortNumber(port)
-                if pciComponent.resources.CR_space_agent.getPortNumber() is None:
-                    print "cant find port number , probabely BDF wrong "
-                    exit(1)
+                        found = True
+                        break
+                #if pciComponent.resources.CR_space_agent.getPortNumber() is None:
+                    if not found:
+                        print "cant find port number , probabely BDF wrong "
+                        exit(1)
             #         #########################################################
 
             else:
@@ -225,18 +230,20 @@ class Monostate:
                 rangeOfFor = 8
                 if pcoreAdd == 0:
                     rangeOfFor = 16
+                found = False
                 for port in range(rangeOfFor):
                     if activeHost & mask != 0:
-                        compliterId.set_port_number(port+pcoreAdd)
+                        pciComponent.resources.CR_space_agent.setPortNumber(port+pcoreAdd)
                         if busOfTheComponent == (compliterId.get_with_CRspace() >> 8):
                             pciComponent.resources.CR_space_agent.setPortNumber(port+pcoreAdd)
+                            found = True
                             break
                     mask = mask << 1
-
-                if pciComponent.resources.CR_space_agent.getPortNumber() is None:
-                    print "cant find port number , probabely BDF wrong "
-                    exit(1)
-        print "port :::::::" + str(pciComponent.resources.CR_space_agent.getPortNumber())
+                #if pciComponent.resources.CR_space_agent.getPortNumber() is None:
+                    if not found:
+                        print "cant find port number , probabely BDF wrong "
+                        exit(1)
+        print "port :::::::" + str(pciComponent.resources.CR_space_agent.getPortNumber()) #debug
 
     def check_if_dutHasSecureFw(self):
         cr_space = self._inner.dutComponent.resources.CR_space_agent.get_CRspace()
@@ -253,7 +260,6 @@ class Monostate:
         return True
 
     def find_BDF_according_the_device(self, device_number):
-
         name_of_device = ""
         for num in device_name.keys():
             if num == device_number:
@@ -262,27 +268,50 @@ class Monostate:
         if name_of_device == "BW":
             self._inner.dutComponent.setIsSwitch(True)
             self._inner.dutComponent.resources.set_Confspace_agent(conf_space_agent(self.find_BW_BDF()))
-        elif name_of_device == "galil":
+            return
+        elif name_of_device == "galil" and self._inner.dutComponent.resources.get_CRspace_agent().mst_read('pcie_switch_en'):
             self._inner.dutComponent.setIsSwitch(True)
-            self._inner.dutComponent.resources.set_Confspace_agent(conf_space_agent(self.find_Connect_x_5_BDF()))
+            self._inner.dutComponent.resources.set_Confspace_agent(conf_space_agent(self.find_galil_switch_BDF()))
+            return
         else:
             self._inner.dutComponent.resources.set_Confspace_agent(conf_space_agent(self.find_other_BDf()))
 
     def find_BW_BDF(self):
-        status, primery_bus = self._inner.CliAgent.execute_job_and_return_returncode_and_output(
-            "mcra 0X11021c.8")  ##command:mcra 0X11021c.8
-        bridge = 123  ####################ask
-        function = "0"
-        BDF = primery_bus + str(2 * bridge) + function
-        return BDF
+        if not(self._inner.dutPortNumber >=20 or self._inner.dutPortNumber <=27 and
+            self._inner.dutPortNumber >= 30 or self._inner.dutPortNumber <= 37):
+            print "invalid port number"
+            exit(1)
+        compliterId = CompliterIdProperty.CompliterIdProperty(self._inner.dutComponent.resources)
+        self._inner.dutComponent.resources.CR_space_agent.setPortNumber(int(self._inner.dutPortNumber))
+        compliterIdReturn = compliterId.get_with_CRspace()
+        B = int(compliterIdReturn >> 8)
+        D = int(compliterIdReturn & 0x00ff)
+        F = 0
+        return bdf_feature.bdf_feature(B, D, F).bdf
 
-    def find_Connect_x_5_BDF(self):
-        status, primery_bus = self._inner.CliAgent.execute_job_and_return_returncode_and_output(
-            "mcra 0X11021c.8")  ####################ask
-        bridge = "123"  ####################ask
-        function = "0"
-        BDF = primery_bus + bridge + function
-        return BDF
+
+
+    def find_galil_switch_BDF(self):
+        activeHost = ActiveHostProperty.ActiveHostProperty(self._inner.dutComponent.resources).get_with_CRspace()
+        compliterId = CompliterIdProperty.CompliterIdProperty(self._inner.dutComponent.resources)
+        counter = 0
+        mask = 0b0000000000000001
+        found = False
+        for port in range(16):
+            if activeHost & mask != 0:
+                counter += 1
+                if counter == int(self._inner.dutPortNumber)+1:
+                    self._inner.dutComponent.resources.CR_space_agent.setPortNumber(int(port))
+                    compliterIdReturn = compliterId.get_with_CRspace()
+                    B = int(compliterIdReturn >> 8)
+                    D = int(compliterIdReturn & 0x00ff)
+                    F=0
+                    found = True
+                    return bdf_feature.bdf_feature(B, D, F).bdf
+            mask = mask << 1
+            if not found:
+                print "inactive port number inserted"
+                exit(1)
 
     def find_other_BDf(self):
         status, mst_output = self._inner.CliAgent.execute_job_and_return_returncode_and_output(
@@ -316,11 +345,11 @@ class Monostate:
             self.find_dsc_component_BDF_conf_space()  # find the other side of the link
             self.find_cr_space("downstreamComponent")
             self.findPortNumber(self._inner.dutPortNumber, self._inner.downstreamComponent, isDutDevice)
+            print self._inner.downstreamComponent.resources.get_CRspace_agent().get_CRspace()
+            print self._inner.downstreamComponent.resources.get_Confspace_agent().get_bdf()
         else:
             self._inner.dutIsUpstream = False
             self._inner.downstreamComponent = self._inner.dutComponent
-            print self._inner.downstreamComponent.resources.get_CRspace_agent().get_CRspace()
-            print self._inner.downstreamComponent.resources.get_Confspace_agent().get_bdf()
             self.find_usc_component_BDF_conf_space()  ###find the other side of the link
             self.find_cr_space("upstreamComponent")
             self.findPortNumber(self._inner.dutPortNumber, self._inner.upstreamComponent,isDutDevice)

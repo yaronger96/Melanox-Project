@@ -4,10 +4,10 @@ from PciProperty import PciProperty
 class ActiveHostProperty(PciProperty):
 
     def get_with_CRspace(self):
-        device, address, offset, size = self.getDataFromCrspaceDb('active_host_space')
-        if device is 'error' & address is 'error' & offset is 'error' & size is 'error':
-            print "error with get the data from CR_space"
-        return self.Property_resurces.get_CRspace_agent().mst_read(device, address, offset, size)
+        # device, address, offset, size = self.getDataFromCrspaceDb('active_host_space')
+        # if device is 'error' & address is 'error' & offset is 'error' & size is 'error':
+        #     print "error with get the data from CR_space"
+        return self.Property_resurces.get_CRspace_agent().mst_read('active_host_space')
 
     def get_with_Confspace(self): ##### maybee need to casting to hex !!!!
         pass
