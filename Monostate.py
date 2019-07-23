@@ -315,7 +315,7 @@ class Monostate:
             self._inner.upstreamComponent = self._inner.dutComponent
             self.find_dsc_component_BDF_conf_space()  # find the other side of the link
             self.find_cr_space("downstreamComponent")
-          #  self.findPortNumber(self._inner.dutPortNumber, self._inner.downstreamComponent, isDutDevice)
+            self.findPortNumber(self._inner.dutPortNumber, self._inner.downstreamComponent, isDutDevice)
         else:
             self._inner.dutIsUpstream = False
             self._inner.downstreamComponent = self._inner.dutComponent
@@ -323,7 +323,7 @@ class Monostate:
             print self._inner.downstreamComponent.resources.get_Confspace_agent().get_bdf()
             self.find_usc_component_BDF_conf_space()  ###find the other side of the link
             self.find_cr_space("upstreamComponent")
-         #   self.findPortNumber(self._inner.dutPortNumber, self._inner.upstreamComponent,isDutDevice)
+            self.findPortNumber(self._inner.dutPortNumber, self._inner.upstreamComponent,isDutDevice)
             print self._inner.upstreamComponent.resources.get_CRspace_agent().get_CRspace()
             print self._inner.upstreamComponent.resources.get_Confspace_agent().get_bdf()
 
