@@ -6,10 +6,8 @@ class SpeedProperty(PciProperty):
     def get_with_CRspace(self):
         return self.Property_resurces.get_CRspace_agent().mst_read('current_link_speed')
 
-    def get_with_Confspace(self): ##### maybee need to casting to hex !!!!
-        ConfSpace_agent = self.Property_resurces.get_Confspace_agent()
-        link_speed = ConfSpace_agent.read(0x10, False, 0x12, 0, 4)
-        return link_speed
+    def get_with_Confspace(self):
+        return self.Property_resurces.get_Confspace_agent().read('current link speed')
 
     def get_with_CliAgent(self):
         pass
@@ -21,8 +19,8 @@ class SpeedProperty(PciProperty):
 
     def set_with_Confspace(self, value):
         ConfSpace_agent = self.Property_resurces.get_Confspace_agent()
-        link_target_updated = ConfSpace_agent.write(0x10, False, 0x30, 0, 4, hex(value))
-        retrain_link = ConfSpace_agent.write(0x10, False, 0x10, 5, 1, 1) ######chang !
+        link_target_updated = ConfSpace_agent.write('target link speed', hex(value))
+        ConfSpace_agent.write('retrain_link', 1)
         return link_target_updated  #return the value in the reg after the change
 
     def set_with_CliAgent(self, value):
