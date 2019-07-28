@@ -7,11 +7,12 @@ class DisableEnableOp(Operation):
     def execute(self):
         server = Monostate()
         usc = server._inner.upstreamComponent
-        dsc = server._inner.downstreamComponent
+       # dsc = server._inner.downstreamComponent
         disableenableprop = DisableEnableProperty(usc.resources)
         disableenableprop.set_with_Confspace(1)
-        time.sleep(0.32)
+        time.sleep(0.05)
         disableenableprop.set_with_Confspace(0)
+        time.sleep(0.32)
         if usc.isSwitch():
             self.rescanPciBuses()
 
