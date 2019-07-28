@@ -9,9 +9,7 @@ class HeaderTypeProperty(PciProperty):
     #         return self.Property_resurces.get_CRspace_agent().mst_read(device, address, offset, size)
 
     def get_with_Confspace(self):  ##### maybee need to casting to hex !!!!
-        ConfSpace_agent = self.Property_resurces.get_Confspace_agent()
-        header_type = ConfSpace_agent.read_header(0x0E, 0, 7)
-        return header_type
+        return self.Property_resurces.get_Confspace_agent().read('header type')
 
     def get_with_CliAgent(self):
         pass

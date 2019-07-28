@@ -9,10 +9,8 @@ class VendorIDProperty(PciProperty):
     def get_with_CRspace(self):
         pass
 
-    def get_with_Confspace(self):  ##### maybee need to casting to hex !!!!
-        ConfSpace_agent = self.Property_resurces.get_Confspace_agent()
-        self.device_vendor_id = ConfSpace_agent.read_header(0x00, 0, 16)
-        return self.device_vendor_id
+    def get_with_Confspace(self):
+        return self.Property_resurces.get_CRspace_agent().mst_read('vendor_id')
 
     def get_with_CliAgent(self):
         pass
