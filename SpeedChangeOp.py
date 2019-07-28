@@ -13,7 +13,7 @@ class SpeedChangeOp(Operation):
         currentspeed = speedchangeprop.get_with_Confspace()
         print "Changing from Gen {} to Gen {}".format(currentspeed, targetspeed)
         speedchangeprop.set_with_Confspace(targetspeed)
-        time.sleep(0.32) ####change
+        time.sleep(0.1) ####change
 
 
 
