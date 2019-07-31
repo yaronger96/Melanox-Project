@@ -2,7 +2,6 @@
 # -*- python -*-
 '''
 Created on 19.1.2018
-
 @author: Adiry
 '''
 import os
@@ -108,6 +107,7 @@ class crspace_galil:
 
         'active_host_space': [0X126D40, 0, 16, 0],
         'cfgwr0_compliter_id': [0X108340, 0, 16, 0x10],  # address for port 0
+        'port_state' : [0x137000,0,8,0x100],
 
         # cause
         'rx_errors_get': [0x13b01c, 0, 32, 0x400],
@@ -193,7 +193,8 @@ class crspace_bluefield_pcore0:
         'pxd_cause_clear': [0x120198, 0, 32, 0x200],
         'primary_bus': [0X11041c, 8, 8, 0],
         'active_host_space': [0X13ff40, 0, 16, 0],
-        'cfgwr0_compliter_id': [0X108340, 0, 16, 0x08],  #address for port 0
+        'cfgwr0_compliter_id': [0X108340, 0, 16, 0x10],
+        'port_state' : [0x137000,0,8,0x100]  #address for port 0
 
 
     }
@@ -272,9 +273,9 @@ class crspace_bluefield_pcore1:
         'pxd_cause_get': [0x16019c, 0, 32, 0x200],
         'pxd_cause_clear': [0x160198, 0, 32, 0x200],
         'primary_bus': [0X15061c, 8, 8, 0],
-        'active_host_space': [0X15ff40, 0, 16, 0],
-        'cfgwr0_compliter_id': [0X148340, 0, 16, 0x08],  # address for port 0
-
+        'active_host_space': [0X17ff40, 0, 16, 0],
+        'cfgwr0_compliter_id': [0X148340, 0, 16, 0x10],  # address for port 0
+        'port_state' : [0x177000,0,8,0x100]
 
     }
 
@@ -293,6 +294,7 @@ class crspace_negev_pcore0:
         'primary_bus': [0X11041c, 8, 8],
         'active_host_space': [0X17ff40, 0, 16 , 0],
         'cfgwr0_compliter_id': [0X108340, 0, 16, 0x08],  # address for port 0
+        'port_state' : [0x157000,0,8,0x100]
 
     }
 
@@ -311,4 +313,5 @@ class crspace_negev_pcore1:
         'primary_bus': [0X19061c, 8, 8, 0],
         'active_host_space': [0X1dff40, 0, 16, 0],
         'cfgwr0_compliter_id': [0X188340, 0, 16, 0x08],  # address for port 0
+         'port_state' : [0x1d7000,0,8,0x100]
     }
