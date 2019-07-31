@@ -53,8 +53,11 @@ class crspace_shomron:
         'pxd_cause_clear': [0x1100d8, 0, 32,  0x200],
         #cause new
         "pxd_causereg0":[0x1100cc,0,32,0x200],
+        "clr_pxd_causereg0": [0x1100d8, 0, 32, 0x200],
         "npi_checks_causereg":[0x100dac,0,17,0x0],
+        "clr_npi_checks_causereg": [0x100db8, 0, 17, 0x0],
         "cause_fatal_causereg":[0x11e86c,0,12,0x200],
+        "clr_cause_fatal_causereg": [0x11e878, 0, 12, 0x200],
 
     }
 
@@ -76,8 +79,11 @@ class crspace_dotan:
         'pxd_cause_clear': [0x1100d8, 0, 32, 0x200],
         #cuase new
         "pxd_causereg0": [0x1100cc, 0, 32, 0x200],
+        "clr_pxd_causereg0": [0x1100d8, 0, 32, 0x200],
         "npi_checks_causereg": [0x1061cc, 0, 17, 0x20],
+        "clr_npi_checks_causereg": [0x1061d8, 0, 17, 0x20],
         "cause_fatal_causereg": [0x11e86c, 0, 12, 0x200],
+        "clr_cause_fatal_causereg": [0x11e878, 0, 12, 0x200],
 
     }
 
@@ -125,8 +131,11 @@ class crspace_galil:
 
         # cuase new
         "pxd_causereg0": [0x12019c, 0, 32, 0x200],
+        "clr_pxd_causereg0": [0x120198, 0, 32, 0x200],
         "npi_checks_causereg": [0x10b81c, 0, 32, 0x80],
+        "clr_npi_checks_causereg": [0x10b818, 0, 32, 0x80],
         "cause_fatal_causereg": [0x13b0dc, 0, 14, 0x400],
+        "clr_cause_fatal_causereg": [0x13b0d8, 0, 14, 0x400],
     }
 
 class crspace_bluefield_pcore0:
@@ -211,8 +220,11 @@ class crspace_bluefield_pcore0:
 
         # cuase new
         "pxd_causereg0": [0x12019c, 0, 32, 0x200],
+        "clr_pxd_causereg0": [0x120198, 0, 32, 0x200],
         "npi_checks_causereg": [0x10b81c, 0, 32, 0x80],
+        "clr_npi_checks_causereg": [0x10b818, 0, 32, 0x80],
         "cause_fatal_causereg": [0x13b0dc, 0, 14, 0x400],
+        "clr_cause_fatal_causereg": [0x13b0d8, 0, 14, 0x400],
 
 
     }
@@ -296,8 +308,11 @@ class crspace_bluefield_pcore1:
         'port_state' : [0x177000,0,8,0x100],
         # cuase new
         "pxd_causereg0": [0x16019c, 0, 32, 0x200],
+        "clr_pxd_causereg0": [0x160198, 0, 32, 0x200],
         "npi_checks_causereg": [0x14b81c, 0, 32, 0x80],
+        "clr_npi_checks_causereg": [0x14b818, 0, 32, 0x80],
         "cause_fatal_causereg": [0x17b0dc, 0, 14, 0x400],
+        "clr_cause_fatal_causereg": [0x17b0d8, 0, 14, 0x400],
 
     }
 
@@ -319,8 +334,11 @@ class crspace_negev_pcore0:
         'port_state' : [0x157000,0,8,0x100],
         # cuase new
         "pxd_causereg0": [0x14019c, 0, 32, 0x200],
+        "clr_pxd_causereg0": [0x140198, 0, 32, 0x200],
         "npi_checks_causereg": [0x10b81c, 0, 32, 0x80],
+        "clr_npi_checks_causereg": [0x10b818, 0, 32, 0x80],
         "cause_fatal_causereg": [0x15b07c, 0, 16, 0x200],
+        "clr_cause_fatal_causereg": [0x15b078, 0, 16, 0x200],
 
     }
 
@@ -342,6 +360,9 @@ class crspace_negev_pcore1:
          'port_state' : [0x1d7000,0,8,0x100],
         # cuase new
         "pxd_causereg0": [0x1c019c, 0, 32, 0x200],
+        "clr_pxd_causereg0": [0x1c0198, 0, 32, 0x200],
         "npi_checks_causereg": [0x18b81c, 0, 32, 0x80],
+        "clr_npi_checks_causereg": [0x18b818, 0, 32, 0x80],
         "cause_fatal_causereg": [0x1db07c, 0, 16, 0x200],
+        "clr_cause_fatal_causereg": [0x1db078, 0, 16, 0x200],
     }
