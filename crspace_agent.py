@@ -1,5 +1,6 @@
+import sys
+#sys.path.insert(0, '/auto/sw_work/fwshared/c_yarong/pci_verification/student_project')
 import os
-from Monostate import Monostate
 from crspace_db import crspace_shomron
 from crspace_db import crspace_dotan
 from crspace_db import crspace_galil
@@ -10,11 +11,12 @@ from crspace_db import crspace_negev_pcore1
 from crspace_db import crspace_and_nic
 class crspace_agent:
 
-    def __init__(self, CRspace):
+    def __init__(self, CRspace, cli):
         self.Crspace = CRspace #str
         self.portNumber = None
         self.PcoreNum = None
         self.read_only = False
+        self.CliAgent = cli
 
     def get_CRspace(self):
         return self.Crspace
@@ -46,11 +48,12 @@ class crspace_agent:
         if device is 'error' and address is 'error' and offset is 'error' and size is 'error':
             print "error with get the data from CR_space"
             exit(1)
-        if self.PcoreNum is None:
-            address += jump_between_port * self.portNumber
-        else:
-            mod = self.getModAccordingPcoreNum()
-            address += jump_between_port * (self.portNumber % mod)
+        if self.portNumber is not None:
+            if self.PcoreNum is None:
+                address += jump_between_port * self.portNumber
+            else:
+                mod = self.getModAccordingPcoreNum()
+                address += jump_between_port * (self.portNumber % mod)
         return device, address, offset, size
 
 
@@ -65,9 +68,8 @@ class crspace_agent:
         rtype str in hex
         """
         device, address, offset, size = self.builder_CRspace_access(regName)
-        inf_singletone = Monostate()
         cmd = "mcra " + device + " " + str(hex(address)) + "." + str(offset) + ":" + str(size)
-        (status, output) = inf_singletone._inner.CliAgent.execute_job_and_return_returncode_and_output(cmd)
+        (status, output) = self.CliAgent.execute_job_and_return_returncode_and_output(cmd)
         if status:
             return None
         output = eval(output)
@@ -86,13 +88,12 @@ class crspace_agent:
         rtype str in hex
         """
         device, address, offset, size = self.builder_CRspace_access(regName)
-        inf_singletone = Monostate()
         # word = self.mst_read(device, address)
         # mask = operator.lshift((operator.lshift(1, size) - 1), offset)
         # word = (word & ~mask | ((operator.lshift(value, offset) & mask)))
 
         cmd = "mcra " + device + " " + str(hex(address)) + "." + str(offset) + ":" + str(size) + " " + str(hex(value))
-        (status, output) = inf_singletone._inner.CliAgent.execute_job_and_return_returncode_and_output(cmd)
+        (status, output) = self.CliAgent.execute_job_and_return_returncode_and_output(cmd)
         print("mcra write: {} - return status is: {} ".format(cmd,status))
         if status != 0:
             return -1
