@@ -407,6 +407,11 @@ class Monostate:
             bdf_list.append(tmp[0])
         return bdf_list
 
+    def getUscComponent(self):
+        return self._inner.upstreamComponent
+
+    def getDscComponent(self):
+        return self._inner.downstreamComponent
 
 # -----------------------------------------------------------------------
 # CR space agent, here until we find solution for the import problem
