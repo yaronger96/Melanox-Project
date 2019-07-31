@@ -7,11 +7,10 @@ class SpeedVerifier(verifier):
         speedValue = SpeedProperty(self.componentForVerifier.resources).get()
         self.correntValue = speedValue
 
-
-    def eval(self,):
-        if self.correntValue == self.valueToCompare:
-            return
-        error = 'speed expected value: {} , but was: {}'.format(self.valueToCompare, self.correntValue)
-        bdf = self.componentForVerifier.resources.conf_space_agent.getBdf()
-        uscOrDsc = self.componentForVerifier.getUscOrDsc()
-        self.eventHendler.addEvent(self.iter, error, bdf, uscOrDsc)
+    def eval(self,iter):
+        self.getValue()
+        if self.correntValue != self.valueToCompare:
+            error = 'speed expected value: {} , but was: {}'.format(self.valueToCompare, self.correntValue)
+            bdf = self.componentForVerifier.resources.conf_space_agent.getBdf()
+            uscOrDsc = self.componentForVerifier.getUscOrDsc()
+            self.eventHendler.addEvent(iter, error, bdf, uscOrDsc)

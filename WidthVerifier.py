@@ -7,10 +7,11 @@ class WidthVerifier(verifier):
         widthValue = WidthProperty(self.componentForVerifier.resources).get()
         self.correntValue = widthValue
 
-    def eval(self):
+    def eval(self, iter):
+        self.getValue()
         if self.correntValue == self.valueToCompare:
             return
         error = 'width expected value: {} , but was: {}'.format(self.valueToCompare, self.correntValue)
         bdf = self.componentForVerifier.resources.conf_space_agent.getBdf()
         uscOrDsc = self.componentForVerifier.getUscOrDsc()
-        self.eventHendler.addEvent(self.iter, error, bdf, uscOrDsc)
+        self.eventHendler.addEvent(iter, error, bdf, uscOrDsc)
