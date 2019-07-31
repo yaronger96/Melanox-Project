@@ -80,8 +80,9 @@ class VerifierBuilder:
             cause_fatal_causeregVerifier = CauseVerifier(Component, "cause_fatal_causereg", 0x0)
             VerifierComposite.addToverifierList(cause_fatal_causeregVerifier)
         return VerifierComposite
-
-
+    
+    def getVerifierComposite(self):
+            return self.verifierComposite
 
 
 
