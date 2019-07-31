@@ -7,6 +7,7 @@ class PcieTest:
 
     def __init__(self):
         self.g_args = None
+        self.args = None
 
     def parseArgs(self):
         parser = argparse.ArgumentParser()
@@ -39,7 +40,9 @@ class PcieTest:
     def main(self):
         self.parseArgs()
         self.addArgs()
-        server = Monostate.Monostate(self.g_args.dut, self.g_args.serverName, self.g_args.p)
+        self.combineArgs()
+        print self.args
+        server = Monostate.Monostate(self.args.dut, self.args.serverName, self.args.p)
         self.preTest()
         self.run()
         self.postTest()
