@@ -134,6 +134,7 @@ class Monostate:
         self.find_topology()
 
     def find_cr_space(self, name_of_component):
+
         if name_of_component == "dut":
             vendor_id_pro = VendorIDProperty.VendorIDProperty(self._inner.dutComponent.resources)
         elif name_of_component == "upstreamComponent":
@@ -144,43 +145,51 @@ class Monostate:
         ##now we have the vendor id
         self._inner.mlxDut = vendor_id_pro.is_mlx_device()
         flag = True
+        if name_of_component == 'dut':
+            device_id = self._inner.dutComponent.resources.conf_space_agent.read_header(0x02, 0, 16)
+        elif name_of_component == 'upstreamComponent':
+            device_id = self._inner.upstreamComponent.resources.conf_space_agent.read_header(0x02, 0, 16)
+        else:
+            device_id = self._inner.downstreamComponent.resources.conf_space_agent.read_header(0x02, 0, 16)
         if self._inner.mlxDut:  ##mellanox device
-            if name_of_component == 'dut':
-                device_id = self._inner.dutComponent.resources.conf_space_agent.read_header(0x02, 0, 16)
-            elif name_of_component == 'upstreamComponent':
-                device_id = self._inner.upstreamComponent.resources.conf_space_agent.read_header(0x02, 0, 16)
-            else:
-                device_id = self._inner.downstreamComponent.resources.conf_space_agent.read_header(0x02, 0, 16)
-            print device_id
+            #print device_id
             for device in device_cr_space.keys():
                 if device == str(device_id):
                     flag = False
                     cr_space_str = device_cr_space[device]
                     if name_of_component == "dut":
                         self._inner.dutComponent.resources.set_CRspace_agent(crspace_agent.crspace_agent(cr_space_str, self._inner.CliAgent))
-                        self._inner.dutComponent.setIsSwitch(
-                            self.checkIfSwitch(device_id, self._inner.dutComponent.resources.CR_space_agent))
-                        if self.check_if_dutHasSecureFw():
+                        self._inner.dutComponent.setIsSwitch(self.checkIfSwitch(device_id, self._inner.dutComponent.resources.CR_space_agent))
+                        self._inner.dutComponent.setDeviceName(device_name[device])
+                        if self.check_if_dutHasSecureFw(self._inner.dutComponent):
                             self._inner.dutComponent.resources.CR_space_agent.set_read_only_flag()
                     elif name_of_component == "upstreamComponent":
                         self._inner.upstreamComponent.resources.set_CRspace_agent(crspace_agent.crspace_agent(cr_space_str, self._inner.CliAgent))
                         self._inner.dutComponent.setIsSwitch(
                             self.checkIfSwitch(device_id, self._inner.upstreamComponent.resources.CR_space_agent))
+                        self._inner.upstreamComponent.setDeviceName(device_name[device])
+                        if self.check_if_dutHasSecureFw(self._inner.upstreamComponent):
+                            self._inner.upstreamComponent.resources.CR_space_agent.set_read_only_flag()
                     else:  ##name_of_component=="downstreamcomponent
                         self._inner.downstreamComponent.resources.set_CRspace_agent(crspace_agent.crspace_agent(cr_space_str, self._inner.CliAgent))
                         self._inner.dutComponent.setIsSwitch(
                             self.checkIfSwitch(device_id, self._inner.downstreamComponent.resources.CR_space_agent))
+                        self._inner.downstreamcomponent.setDeviceName(device_name[device])
+                        if self.check_if_dutHasSecureFw(self._inner.downstreamcomponent):
+                            self._inner.downstreamcomponent.resources.CR_space_agent.set_read_only_flag()
 
             if flag:
                 print("not found this device")
         if not self._inner.mlxDut or flag:  # no mlx device
             if name_of_component == "dut":
                 self._inner.dutComponent.resources.set_CRspace_agent(crspace_agent.crspace_agent(None, self._inner.CliAgent))
+                self._inner.dutComponent.setDeviceName(device_id)
             elif name_of_component == "upstreamComponent":
                 self._inner.upstreamComponent.resources.set_CRspace_agent(crspace_agent.crspace_agent(None, self._inner.CliAgent))
+                self._inner.upstreamComponent.setDeviceName(device_id)
             else:  ##name_of_component=="downstreamcomponent
                 self._inner.downstreamComponent.resources.set_CRspace_agent(crspace_agent.crspace_agent(None, self._inner.CliAgent))
-
+                self._inner.downstreamComponent.setDeviceName(device_id)
     def checkIfSwitch(self, deviceId, resurceCrSpace):
         if str(deviceId) == hex(41682) or str(deviceId) == hex(6517):  # BF device
             return True
@@ -263,8 +272,8 @@ class Monostate:
 #                     exit(1)
         print "port :::::::" + str(pciComponent.resources.CR_space_agent.getPortNumber()) #debug
 
-    def check_if_dutHasSecureFw(self):
-        cr_space = self._inner.dutComponent.resources.CR_space_agent.get_CRspace()
+    def check_if_dutHasSecureFw(self,component):
+        cr_space = component.resources.CR_space_agent.get_CRspace()
         temp = "flint -d" + str(cr_space) + "q"
         status, output = self._inner.CliAgent.execute_job_and_return_returncode_and_output(temp)
         for line in output:

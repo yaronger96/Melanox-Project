@@ -23,6 +23,9 @@ class crspace_agent:
     def set_read_only_flag(self):
         self.read_only = True
 
+    def get_read_only_flag(self):
+        return self.read_only
+
     def setPortNumber(self, portNum):
         self.portNumber = portNum
 
