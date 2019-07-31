@@ -8,8 +8,9 @@ class CauseBulkProperty(PciProperty):
     def get_with_CRspace(self):
         return self.Property_resurces.get_CRspace_agent().mst_read(self.nameOfReg)
 
-
-
+    def getsize(self):
+        device, address, offset, size, jump_between_port = self.Property_resurces.get_CRspace_agent().builder_CRspace_access(self.nameOfReg)
+        return size
     def get_with_Confspace(self):  ##### maybee need to casting to hex !!!!
         pass
 
