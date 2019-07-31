@@ -1,6 +1,6 @@
 
 from verifier import verifier
-import RxErrorProperty
+import CauseBulkProperty
 
 class CauseVerifier(verifier):
     def __init__(self, component, nameOfCause, mask, valueToCompare=0):
