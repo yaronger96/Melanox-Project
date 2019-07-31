@@ -468,5 +468,10 @@ class Monostate:
                 if port_state == 0x70:
                     return True
             return False
-            
+
+    def getUscComponent(self):
+        return self._inner.upstreamComponent
+
+    def getDscComponent(self):
+        return self._inner.downstreamComponent
 

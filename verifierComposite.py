@@ -13,13 +13,13 @@ class verifierComposite:
        # self.eventHendler = EventHendler()
        # self.iter = iter
 
-    def eval(self, iter, valueToCompare):
+    def eval(self, iter):
         if not self.nodeList: #list is empty
             for verifier in self.verifierList:
-                verifier.eval(iter, valueToCompare)
+                verifier.eval(iter)
         else:
             for node in self.nodeList:
-                node.eval(iter, valueToCompare)
+                node.eval(iter)
 
     def addToNodeList(self, verifierForNodeList):
         self.nodeList.append(verifierForNodeList)
