@@ -1,29 +1,27 @@
 from abc import abstractmethod
 from EventHendler import EventHendler
+from PciProperty import PciProperty
 
 class verifier:
-    def __init__(self, value_to_compare, component,iter):
-        self.valueToCompare = value_to_compare
-        self.correntValue = value_to_compare
+    def __init__(self, component , valueToCompare):
+        self.valueToCompare = valueToCompare
+        #self.correntValue = value_to_compare
         self.componentForVerifier = component
         self.eventHendler = EventHendler()
-        self.iter = iter
+        #self.iter = iter
 
     @abstractmethod
     def getValue(self):
         pass
 
     @abstractmethod
-    def eval(self,):
+    def eval(self, iter):
         pass
 
     @abstractmethod
     def clean(self):
         pass
 
-    @abstractmethod
-    def clean(self):
-        pass
 
 
 
