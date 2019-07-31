@@ -1,6 +1,6 @@
-
+from CauseBulkProperty import CauseBulkProperty
 from verifier import verifier
-import RxErrorProperty
+
 
 class CauseVerifier(verifier):
     def __init__(self, component, nameOfCause, mask, valueToCompare=0):
@@ -10,8 +10,9 @@ class CauseVerifier(verifier):
 
 
     def getValue(self):
-        propertyReturn = verifier.pciProperty(self.componentForVerifier.resources).get_with_CRspace()
-        self.correntValue = propertyReturn
+        BulkValue = CauseBulkProperty(self.componentForVerifier.resources, self.nameOfCause).get_with_CRspace()
+        self.correntValue =BulkValue
+
 
 
     def eval(self,iter):
