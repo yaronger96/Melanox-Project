@@ -5,7 +5,7 @@ from PciProperty import PciProperty
 class verifier:
     def __init__(self, component , valueToCompare):
         self.valueToCompare = valueToCompare
-        #self.correntValue = value_to_compare
+        self.correntValue = 0
         self.componentForVerifier = component
         self.eventHendler = EventHendler()
         #self.iter = iter
