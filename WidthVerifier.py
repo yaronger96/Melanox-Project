@@ -15,3 +15,6 @@ class WidthVerifier(verifier):
         bdf = self.componentForVerifier.resources.conf_space_agent.getBdf()
         uscOrDsc = self.componentForVerifier.getUscOrDsc()
         self.eventHendler.addEvent(iter, error, bdf, uscOrDsc)
+
+    def clean(self):
+        pass

@@ -11,14 +11,14 @@ class CauseVerifier(verifier):
 
 
     def getValue(self):
-        BulkValue = CauseBulkProperty(self.componentForVerifier.resources, self.nameOfCause).get_with_CRspace()
+        BulkValue = CauseBulkProperty.CauseBulkProperty(self.componentForVerifier.resources, self.nameOfCause).get_with_CRspace()
         self.correntValue =BulkValue
 
 
     def eval(self,iter):
         self.getValue()
-        sizeinbits = CauseBulkProperty(self.componentForVerifier.resources, self.nameOfCause).getsize()
-        mask_for_check = 0b0
+        sizeinbits = CauseBulkProperty.CauseBulkProperty(self.componentForVerifier.resources, self.nameOfCause).getsize()
+        mask_for_check = 0b1
         # mask = 0x3fffffB #0000 0011 1111 1111 1111 1111 1111 1011
         status_after_mask = self.correntValue & ~self.mask
         if status_after_mask == self.valueToCompare:
@@ -32,3 +32,9 @@ class CauseVerifier(verifier):
         bdf = self.componentForVerifier.resources.conf_space_agent.getBdf()
         uscOrDsc = self.componentForVerifier.getUscOrDsc()
         self.eventHendler.addEvent(iter, error, bdf, uscOrDsc)
+
+    def clean(self):
+        clrNameOfCause = "clr_" + self.nameOfCause
+        CauseBulkProperty.CauseBulkProperty(self.componentForVerifier.resources,
+                                                        clrNameOfCause).set_with_CRspace(-1)
+

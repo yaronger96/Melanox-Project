@@ -21,6 +21,15 @@ class verifierComposite:
             for node in self.nodeList:
                 node.eval(iter)
 
+
+    def clean(self):
+        if not self.nodeList: #list is empty
+            for verifier in self.verifierList:
+                verifier.clean()
+        else:
+            for node in self.nodeList:
+                node.clean()
+
     def addToNodeList(self, verifierForNodeList):
         self.nodeList.append(verifierForNodeList)
 

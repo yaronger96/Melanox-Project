@@ -18,10 +18,11 @@ class CauseBulkProperty(PciProperty):
         pass
 
     def set_with_CRspace(self, value):
-        pass
+        self.Property_resurces.get_CRspace_agent().mst_write(self.nameOfReg, value)
 
     def set_with_Confspace(self, value):
         pass
+
     def set_with_CliAgent(self, value):
         pass
 
