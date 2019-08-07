@@ -8,11 +8,12 @@ class PciProperty:
 
     def get(self):
         if self.Property_resurces.Is_CRspace_exist():
-            self.get_with_CRspace()
+            value = self.get_with_CRspace()
         elif self.Property_resurces.Is_Confspace_exist():
-            self.get_with_Confspace()
+            value = self.get_with_Confspace()
         else:
-            self.get_with_CliAgent()
+            value = self.get_with_CliAgent()
+        return value
 
 
     def set(self, value):
@@ -102,7 +103,3 @@ class PciProperty:
     #         return 20
     #     if self.whichPcore == 1:
     #         return 30
-
-
-
-

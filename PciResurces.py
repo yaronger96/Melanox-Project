@@ -16,15 +16,15 @@ class PciResurces(feature.feature):
 
     def Is_CRspace_exist(self):
         if self.CR_space_agent.get_CRspace() is None:
-            return 1
-        else:
             return 0
+        else:
+            return 1
 
     def Is_Confspace_exist(self):
         if self.conf_space_agent.get_bdf() is None:
-            return 1
-        else:
             return 0
+        else:
+            return 1
 
     def get_CRspace_agent(self):
         return self.CR_space_agent
