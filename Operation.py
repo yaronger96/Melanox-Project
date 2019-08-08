@@ -1,10 +1,19 @@
-
+from abc import abstractmethod
 
 
 class Operation:
+    
     def __init__(self):
         pass
-    def rescanPciBuses(self):
+    
+    @abstractmethod
+    def rescanPciBuses(self):    
         pass
+    
+    @abstractmethod
     def execute(self):
-        raise NotImplementedError
+        pass
+
+    @abstractmethod
+    def checkGenOp(self):
+        pass

@@ -18,7 +18,7 @@ class DisableEnableProperty(PciProperty):
 
     def set_with_Confspace(self, value):
         # return the value in the reg after the change
-        return self.Property_resurces.get_Confspace_agent().write('link disable', hex(value))
+        return self.Property_resurces.get_Confspace_agent().write('link disable', value)
 
     def set_with_CliAgent(self, value):
         pass

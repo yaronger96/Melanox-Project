@@ -1,6 +1,6 @@
-import Monostate
-import DisableEnableProperty
-import SpeedProperty
+import Monostate.Monostate as Monostate
+import property.DisableEnableProperty as DisableEnableProperty
+import property.SpeedProperty as SpeedProperty
 from Operation import Operation
 import time
 
@@ -21,8 +21,8 @@ class DisableEnableOp(Operation):
         time.sleep(0.05)
         disableenableprop.set_with_Confspace(0)
         time.sleep(0.32)
-        if usc.isSwitch():
-            self.rescanPciBuses()
+#         if usc.isSwitch():
+#             self.rescanPciBuses()
 
     def checkGenOp(self):
         usc = self.server._inner.upstreamComponent
